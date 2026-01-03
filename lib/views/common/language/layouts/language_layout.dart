@@ -30,7 +30,7 @@ class _LanguageLayoutState extends ConsumerState<LanguageLayout> {
   void initLanguage() async {
     ref.read(hiveServiceProvider).getAppLocal().then((appLocal) {
       if (appLocal == null) {
-        ref.read(hiveServiceProvider).saveAppLocal(local: 'en').whenComplete(
+        ref.read(hiveServiceProvider).saveAppLocal(local: 'fr').whenComplete(
             () => debugPrint('Initial app local is save on local'));
       }
     });
@@ -143,6 +143,12 @@ class _LanguageLayoutState extends ConsumerState<LanguageLayout> {
   }
 
   static List<Map<String, dynamic>> languageList = [
+    {
+      "name": "France",
+      "flag":
+          "https://flagdownload.com/wp-content/uploads/Flag_of_France-1024x683.png",
+      "languageCode": "fr",
+    },
     {
       "name": "United States",
       "flag":

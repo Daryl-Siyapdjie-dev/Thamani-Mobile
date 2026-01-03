@@ -137,7 +137,7 @@ class ContactUsController extends StateNotifier<AsyncValue<ContactUsModel>> {
 }
 
 final profileInfoControllerProvider =
-    StateNotifierProvider<ProfileInfoController, AsyncValue<User>>((ref) {
+    StateNotifierProvider.autoDispose<ProfileInfoController, AsyncValue<User>>((ref) {
   final controller = ProfileInfoController(ref);
   controller.getProfileInfo();
   return controller;
@@ -146,13 +146,26 @@ final profileInfoControllerProvider =
 class ProfileInfoController extends StateNotifier<AsyncValue<User>> {
   final Ref ref;
   ProfileInfoController(this.ref) : super(const AsyncValue.loading());
+  
   Future<void> getProfileInfo() async {
     try {
       final response = await ref.read(otherServiceProvider).getProfileinfo();
-      state = AsyncData(User.fromMap(response.data['data']['user']));
+      // Check if controller is still active before updating state
+      try {
+        state = AsyncData(User.fromMap(response.data['data']['user']));
+      } catch (e) {
+        // Controller was disposed, ignore the update
+        debugPrint('ProfileInfoController disposed before state update: $e');
+      }
     } catch (error, stackTrace) {
       debugPrint(error.toString());
-      state = AsyncError(error, stackTrace);
+      // Check if controller is still active before updating state
+      try {
+        state = AsyncError(error, stackTrace);
+      } catch (e) {
+        // Controller was disposed, ignore the update
+        debugPrint('ProfileInfoController disposed before error update: $e');
+      }
     }
   }
 }

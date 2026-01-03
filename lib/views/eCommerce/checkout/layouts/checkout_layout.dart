@@ -59,17 +59,21 @@ class _EcommerceCheckoutLayoutState
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      init();
-      // ignore: unused_result
-      ref.refresh(profileInfoControllerProvider);
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (mounted) {
+        init();
+        // ignore: unused_result
+        ref.refresh(profileInfoControllerProvider);
+      }
+    });
   }
 
   void init() {
     ref.watch(hiveServiceProvider).getDefaultAddress().then((address) {
-      ref.read(selectedDeliveryAddress.notifier).state = address;
+      if (mounted) {
+        ref.read(selectedDeliveryAddress.notifier).state = address;
+      }
     });
   }
 
@@ -376,6 +380,7 @@ class _EcommerceCheckoutLayoutState
                               .read(hiveServiceProvider)
                               .getUserInfo()
                               .then((userInfo) {
+                            if (!mounted) return;
                             if (userInfo != null) {
                               if (registerOtpType == 'email') {
                                 if (userInfo.email == null) {
@@ -384,13 +389,15 @@ class _EcommerceCheckoutLayoutState
                                           "Please update your profile with email to verify your account",
                                       isSuccess: false);
                                 } else {
-                                  context.nav.pushNamed(
-                                    Routes.confirmOTP,
-                                    arguments: ConfirmOTPScreenArguments(
-                                        phoneNumber: userInfo.email!,
-                                        isPasswordRecover: false,
-                                        isFromCheckoutScreen: true),
-                                  );
+                                  if (mounted) {
+                                    context.nav.pushNamed(
+                                      Routes.confirmOTP,
+                                      arguments: ConfirmOTPScreenArguments(
+                                          phoneNumber: userInfo.email!,
+                                          isPasswordRecover: false,
+                                          isFromCheckoutScreen: true),
+                                    );
+                                  }
                                 }
                               } else if (registerOtpType == 'phone') {
                                 if (userInfo.email == null) {
@@ -399,13 +406,15 @@ class _EcommerceCheckoutLayoutState
                                           "Please update your profile with phone number to verify your account",
                                       isSuccess: false);
                                 } else {
-                                  context.nav.pushNamed(
-                                    Routes.confirmOTP,
-                                    arguments: ConfirmOTPScreenArguments(
-                                        phoneNumber: userInfo.phone!,
-                                        isPasswordRecover: false,
-                                        isFromCheckoutScreen: true),
-                                  );
+                                  if (mounted) {
+                                    context.nav.pushNamed(
+                                      Routes.confirmOTP,
+                                      arguments: ConfirmOTPScreenArguments(
+                                          phoneNumber: userInfo.phone!,
+                                          isPasswordRecover: false,
+                                          isFromCheckoutScreen: true),
+                                    );
+                                  }
                                 }
                               }
                             }

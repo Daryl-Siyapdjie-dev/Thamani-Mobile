@@ -187,37 +187,47 @@ class _ConfirmOTPLayoutState extends ConsumerState<ConfirmOTPLayout> {
                                     otp: pinCodeController.text,
                                   )
                                   .then((response) {
+                                if (!mounted) return;
                                 if (response.isSuccess) {
                                   if (widget.arguments.isPasswordRecover) {
-                                    context.nav.pushNamed(
-                                      Routes.createPassword,
-                                      arguments: response.data.toString(),
-                                    );
+                                    if (mounted) {
+                                      context.nav.pushNamed(
+                                        Routes.createPassword,
+                                        arguments: response.data.toString(),
+                                      );
+                                    }
                                   } else if (widget
                                           .arguments.isFromCheckoutScreen ==
                                       true) {
-                                    ref
-                                        .read(isProfileVefifySuccess.notifier)
-                                        .state = true;
-                                    // ignore: unused_result
-                                    ref.refresh(profileInfoControllerProvider);
-                                    Future.delayed(Duration(milliseconds: 200),
-                                        () {
-                                      // pinCodeController.dispose();
-
-                                      context.nav.pop();
-                                    });
+                                    if (mounted) {
+                                      ref
+                                          .read(isProfileVefifySuccess.notifier)
+                                          .state = true;
+                                      // ignore: unused_result
+                                      ref.refresh(profileInfoControllerProvider);
+                                      Future.delayed(Duration(milliseconds: 200),
+                                          () {
+                                        // pinCodeController.dispose();
+                                        if (mounted) {
+                                          context.nav.pop();
+                                        }
+                                      });
+                                    }
                                   } else {
-                                    context.nav.pushNamed(
-                                      Routes.getCoreRouteName(
-                                          AppConstants.appServiceName),
-                                    );
+                                    if (mounted) {
+                                      context.nav.pushNamed(
+                                        Routes.getCoreRouteName(
+                                            AppConstants.appServiceName),
+                                      );
+                                    }
                                   }
 
-                                  GlobalFunction.showCustomSnackbar(
-                                    message: response.message,
-                                    isSuccess: response.isSuccess,
-                                  );
+                                  if (mounted) {
+                                    GlobalFunction.showCustomSnackbar(
+                                      message: response.message,
+                                      isSuccess: response.isSuccess,
+                                    );
+                                  }
                                 }
                               });
 
