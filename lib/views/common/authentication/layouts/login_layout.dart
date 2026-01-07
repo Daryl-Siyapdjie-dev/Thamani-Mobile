@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:ready_ecommerce/components/ecommerce/app_logo.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_button.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_text_field.dart';
+import 'package:ready_ecommerce/components/ecommerce/google_sign_in_button.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
@@ -13,6 +14,7 @@ import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/address/address_controller.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/authentication/authentication_controller.dart';
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
+import 'package:ready_ecommerce/gen/assets.gen.dart';
 import 'package:ready_ecommerce/generated/l10n.dart';
 import 'package:ready_ecommerce/routes.dart';
 import 'package:ready_ecommerce/services/common/hive_service_provider.dart';
@@ -37,8 +39,8 @@ class _LoginLayoutState extends State<LoginLayout> {
 
   @override
   void initState() {
-    phoneController.text = 'user@readyecommerce.com';
-    passwordController.text = 'secret';
+    phoneController.text = '';
+    passwordController.text = '';
     super.initState();
   }
 
@@ -47,6 +49,83 @@ class _LoginLayoutState extends State<LoginLayout> {
     phoneController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  // Show congratulations dialog after successful login
+  void _showCongratulationsDialog(WidgetRef ref) {
+    debugPrint('🎉 Showing congratulations dialog');
+
+    // Use addPostFrameCallback to ensure the dialog shows after current frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => Dialog(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          surfaceTintColor: colors(context).light,
+          insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 24.w,
+              vertical: 40.h,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Congratulations Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Image.asset(
+                    Assets.png.congratilation.path,
+                    height: 180.h,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Gap(24.h),
+                Text(
+                  S.of(context).congratulations,
+                  style: AppTextStyle(context).title.copyWith(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                        color: colors(context).primaryColor,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                Gap(16.h),
+                Text(
+                  S.of(context).loginSuccessMessage,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle(context).bodyText.copyWith(
+                        fontSize: 16.sp,
+                      ),
+                ),
+                Gap(32.h),
+                CustomButton(
+                  buttonText: S.of(context).startShopping,
+                  buttonColor: colors(context).primaryColor,
+                  onPressed: () {
+                    debugPrint('✅ User clicked Start Shopping button');
+                    Navigator.of(context).pop(); // Close dialog
+                    // Load addresses AFTER dialog is closed
+                    ref.read(addressControllerProvider.notifier).getAddress();
+                    // Navigate to dashboard
+                    context.nav.pushNamedAndRemoveUntil(
+                      Routes.getCoreRouteName(AppConstants.appServiceName),
+                      (route) => false,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   @override
@@ -216,18 +295,70 @@ class _LoginLayoutState extends State<LoginLayout> {
                               password: passwordController.text,
                             )
                             .then((response) {
-                          ref
-                              .read(addressControllerProvider.notifier)
-                              .getAddress();
                           if (response.isSuccess) {
-                            context.nav.pushNamed(Routes.getCoreRouteName(
-                                AppConstants.appServiceName));
+                            // Show congratulations dialog instead of direct navigation
+                            _showCongratulationsDialog(ref);
                           }
                         });
                       }
                     },
                   );
           }),
+          // Divider with "OR" text
+          Gap(24.h),
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: colors(context).hintTextColor,
+                  thickness: 1,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Text(
+                  'OR',
+                  style: AppTextStyle(context).bodyTextSmall.copyWith(
+                        color: colors(context).hintTextColor,
+                      ),
+                ),
+              ),
+              Expanded(
+                child: Divider(
+                  color: colors(context).hintTextColor,
+                  thickness: 1,
+                ),
+              ),
+            ],
+          ),
+          Gap(24.h),
+          // Google Sign-In Button
+          Consumer(
+            builder: (context, ref, _) {
+              final isLoading = ref.watch(authControllerProvider);
+              return GoogleSignInButton(
+                isLoading: isLoading,
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  ref
+                      .read(authControllerProvider.notifier)
+                      .googleSignIn()
+                      .then((response) {
+                    if (response.isSuccess) {
+                      // Show congratulations dialog instead of direct navigation
+                      _showCongratulationsDialog(ref);
+                    } else {
+                      // Show error via snackbar
+                      GlobalFunction.showCustomSnackbar(
+                        message: response.message,
+                        isSuccess: false,
+                      );
+                    }
+                  });
+                },
+              );
+            },
+          ),
           Consumer(
             builder: (context, ref, _) {
               return Align(

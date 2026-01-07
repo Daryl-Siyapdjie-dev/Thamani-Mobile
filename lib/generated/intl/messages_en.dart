@@ -85,6 +85,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "confirmOtp": MessageLookupByLibrary.simpleMessage("Confirm OTP"),
     "confirmPassword": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+    "congratulations": MessageLookupByLibrary.simpleMessage("Congratulations!"),
     "contactVia": MessageLookupByLibrary.simpleMessage("or,Contact via"),
     "continueShopping": MessageLookupByLibrary.simpleMessage(
       "Continue Shopping",
@@ -166,6 +167,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "location": MessageLookupByLibrary.simpleMessage("Location"),
     "login": MessageLookupByLibrary.simpleMessage("Log in"),
+    "loginSuccessMessage": MessageLookupByLibrary.simpleMessage(
+      "You are now logged in! Discover our 100% Made in Cameroon products and start shopping now.",
+    ),
     "logout": MessageLookupByLibrary.simpleMessage("Log out"),
     "logoutDialogDes": MessageLookupByLibrary.simpleMessage(
       "You will need to re-enter your credentials to access your account again.Your local save data will be clean!",
@@ -199,6 +203,21 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "office": MessageLookupByLibrary.simpleMessage("Office"),
     "onTheWay": MessageLookupByLibrary.simpleMessage("On The Way"),
+    "onboarding1Description": MessageLookupByLibrary.simpleMessage(
+      "Access the excellence of our terroir. Thamani brings together the best products exclusively designed and processed in Cameroon.",
+    ),
+    "onboarding1Title": MessageLookupByLibrary.simpleMessage(
+      "100% Made in Cameroon",
+    ),
+    "onboarding2Description": MessageLookupByLibrary.simpleMessage(
+      "Discover a rigorous selection of high-end local products, combining traditional know-how and modern requirements.",
+    ),
+    "onboarding2Title": MessageLookupByLibrary.simpleMessage("Premium Quality"),
+    "onboarding3Description": MessageLookupByLibrary.simpleMessage(
+      "Support Cameroonian genius. Shop safely and have the pride of our country delivered directly to your home.",
+    ),
+    "onboarding3Title": MessageLookupByLibrary.simpleMessage("Buy Local"),
+    "onboardingButtonText": MessageLookupByLibrary.simpleMessage("Get Started"),
     "orderAgain": MessageLookupByLibrary.simpleMessage("Order Again"),
     "orderCancelDialogDes": MessageLookupByLibrary.simpleMessage(
       "Are you sure want to cancel this order?",
@@ -311,6 +330,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "size": MessageLookupByLibrary.simpleMessage("Size"),
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
     "sortBy": MessageLookupByLibrary.simpleMessage("Sort by"),
+    "startShopping": MessageLookupByLibrary.simpleMessage("Start Shopping"),
     "startWriting": MessageLookupByLibrary.simpleMessage("Start writing..."),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
     "storeVoucher": MessageLookupByLibrary.simpleMessage("Store voucher"),

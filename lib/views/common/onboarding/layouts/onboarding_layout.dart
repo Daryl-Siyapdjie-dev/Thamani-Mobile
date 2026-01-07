@@ -12,6 +12,7 @@ import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
 import 'package:ready_ecommerce/gen/assets.gen.dart';
 import 'package:ready_ecommerce/routes.dart';
 import 'package:ready_ecommerce/services/common/hive_service_provider.dart';
+import 'package:ready_ecommerce/generated/l10n.dart';
 import 'package:ready_ecommerce/utils/context_less_navigation.dart';
 
 class OnboardingLayout extends ConsumerStatefulWidget {
@@ -45,6 +46,24 @@ class _OnboardingLayoutState extends ConsumerState<OnboardingLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> onboardingItems = [
+      {
+        'image': Assets.png.onboardingOne.path,
+        'title': S.of(context).onboarding1Title,
+        'description': S.of(context).onboarding1Description,
+      },
+      {
+        'image': Assets.png.onboardingTwo.path,
+        'title': S.of(context).onboarding2Title,
+        'description': S.of(context).onboarding2Description,
+      },
+      {
+        'image': Assets.png.onboardingThree.path,
+        'title': S.of(context).onboarding3Title,
+        'description': S.of(context).onboarding3Description,
+      },
+    ];
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w)
@@ -133,7 +152,7 @@ class _OnboardingLayoutState extends ConsumerState<OnboardingLayout> {
                   AbsorbPointer(
                     absorbing: !ref.read(isOnboardingLastPage),
                     child: CustomButton(
-                      buttonText: 'Procced Next',
+                      buttonText: S.of(context).onboardingButtonText,
                       buttonColor: ref.read(isOnboardingLastPage)
                           ? colors(context).primaryColor
                           : ColorTween(
@@ -159,25 +178,4 @@ class _OnboardingLayoutState extends ConsumerState<OnboardingLayout> {
       ),
     );
   }
-
-  final List<Map<String, dynamic>> onboardingItems = [
-    {
-      'image': Assets.png.onboardingOne.path,
-      'title': 'Effortless Shopping',
-      'description':
-          'Discover the convenience of grocery Shopping at Your Fingertips'
-    },
-    {
-      'image': Assets.png.onboardingTwo.path,
-      'title': 'Effortless Shopping 1',
-      'description':
-          'Discover the convenience of grocery Shopping at Your Fingertips'
-    },
-    {
-      'image': Assets.png.onboardingThree.path,
-      'title': 'Effortless Shopping 2',
-      'description':
-          'Discover the convenience of grocery Shopping at Your Fingertips'
-    },
-  ];
 }

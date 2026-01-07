@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ready_ecommerce/models/eCommerce/authentication/sign_up.dart';
 import 'package:ready_ecommerce/models/eCommerce/authentication/user.dart';
 import 'package:ready_ecommerce/models/eCommerce/common/common_response.dart';
+import 'package:ready_ecommerce/services/common/google_sign_in_service.dart';
 import 'package:ready_ecommerce/services/common/hive_service_provider.dart';
 import 'package:ready_ecommerce/services/eCommerce/auth_service/auth_service.dart';
 import 'package:ready_ecommerce/utils/api_client.dart';
@@ -121,6 +123,75 @@ class AuthController extends StateNotifier<bool> {
     }
   }
 
+  /// Google Sign-In authentication method
+  /// Returns CommonResponse with user data if successful
+  Future<CommonResponse> googleSignIn() async {
+    try {
+      state = true; // Set loading state
+
+      // Step 1: Trigger Google Sign-In flow
+      final googleAccount =
+          await ref.read(googleSignInServiceProvider).signInWithGoogle();
+
+      if (googleAccount == null) {
+        state = false;
+        return CommonResponse(
+          isSuccess: false,
+          message: 'Google Sign-In was cancelled or failed',
+        );
+      }
+
+      // Step 2: Get Google access token
+      final accessToken = await ref
+          .read(googleSignInServiceProvider)
+          .getGoogleAccessToken(googleAccount);
+
+      if (accessToken == null) {
+        state = false;
+        return CommonResponse(
+          isSuccess: false,
+          message: 'Failed to get Google access token',
+        );
+      }
+
+      // Step 3: Send access token to backend
+      final response = await ref
+          .read(authServiceProvider)
+          .googleAuth(accessToken: accessToken);
+
+      final String message = response.data['message'];
+
+      // Step 4: Check if response is successful
+      if (response.statusCode == 200) {
+        final userInfo = User.fromMap(response.data['data']['user']);
+        final backendToken = response.data['data']['access']['token'];
+
+        // Step 5: Save user data and token (following login pattern)
+        ref.read(hiveServiceProvider).saveUserInfo(userInfo: userInfo);
+        ref
+            .read(hiveServiceProvider)
+            .saveUserAuthToken(authToken: backendToken);
+        ref.read(apiClientProvider).updateToken(token: backendToken);
+
+        state = false;
+
+        // Step 6: Return user data for phone check
+        return CommonResponse(
+          isSuccess: true,
+          message: message,
+          data: userInfo, // Pass user object to check phone
+        );
+      }
+
+      state = false;
+      return CommonResponse(isSuccess: false, message: message);
+    } catch (error) {
+      state = false;
+      debugPrint(error.toString());
+      return CommonResponse(isSuccess: false, message: error.toString());
+    }
+  }
+
   Future<CommonResponse> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -157,14 +228,29 @@ class AuthController extends StateNotifier<bool> {
             file: file,
           );
       final String message = response.data['message'];
-      final User userData = User.fromMap(response.data['data']['user']);
-      ref.read(hiveServiceProvider).saveUserInfo(userInfo: userData);
+
+      // Check if data and user exist to avoid null error on validation failures
+      if (response.data['data'] != null && response.data['data']['user'] != null) {
+        final User userData = User.fromMap(response.data['data']['user']);
+        ref.read(hiveServiceProvider).saveUserInfo(userInfo: userData);
+      }
+
       state = false;
       return CommonResponse(isSuccess: true, message: message);
     } catch (error) {
       state = false;
       debugPrint(error.toString());
-      return CommonResponse(isSuccess: false, message: error.toString());
+
+      // Extract validation error message if available
+      String errorMessage = error.toString();
+      if (error is DioException && error.response?.data != null) {
+        final responseData = error.response!.data;
+        if (responseData is Map && responseData['message'] != null) {
+          errorMessage = responseData['message'].toString();
+        }
+      }
+
+      return CommonResponse(isSuccess: false, message: errorMessage);
     }
   }
 

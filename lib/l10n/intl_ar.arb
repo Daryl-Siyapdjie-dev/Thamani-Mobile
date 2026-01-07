@@ -357,5 +357,15 @@
   "collectionAddress": "عنوان التجميع",
   "cancellationReason": "سبب الإلغاء",
   "myDigitalProducts": "منتجاتي الرقمية",
-  "thisIsAdigitalProduct": "هذا منتج رقمي، لا يمكنك تغيير الكمية."
+  "thisIsAdigitalProduct": "هذا منتج رقمي، لا يمكنك تغيير الكمية.",
+  "onboarding1Title": "100% صنع في الكاميرون",
+  "onboarding1Description": "احصل على أفضل منتجاتنا المحلية. تجمع ثاماني أفضل المنتجات المصممة والمصنعة حصريًا في الكاميرون.",
+  "onboarding2Title": "جودة ممتازة",
+  "onboarding2Description": "اكتشف مجموعة صارمة من المنتجات المحلية عالية الجودة، تجمع بين الحرفية التقليدية والمتطلبات الحديثة.",
+  "onboarding3Title": "استهلك محليًا",
+  "onboarding3Description": "ادعم العبقرية الكاميرونية. تسوق بأمان واحصل على فخر بلدنا مباشرة إلى منزلك.",
+  "onboardingButtonText": "ابدأ الآن",
+  "congratulations": "تهانينا!",
+  "loginSuccessMessage": "لقد قمت بتسجيل الدخول بنجاح! اكتشف منتجاتنا 100% صنع في الكاميرون وابدأ التسوق الآن.",
+  "startShopping": "ابدأ التسوق"
 }

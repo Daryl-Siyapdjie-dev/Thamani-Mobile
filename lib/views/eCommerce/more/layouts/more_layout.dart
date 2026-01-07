@@ -573,7 +573,7 @@ class _EcommerceMoreLayoutState extends ConsumerState<EcommerceMoreLayout> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user.name!,
+                  user.name ?? 'User',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: AppTextStyle(context)
@@ -582,7 +582,7 @@ class _EcommerceMoreLayoutState extends ConsumerState<EcommerceMoreLayout> {
                 ),
                 Gap(8.h),
                 Text(
-                  user.phone!,
+                  user.phone ?? 'Phone number not set',
                   style: AppTextStyle(context).bodyTextSmall.copyWith(
                         color: EcommerceAppColor.white,
                         fontWeight: FontWeight.w400,

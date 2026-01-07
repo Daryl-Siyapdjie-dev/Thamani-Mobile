@@ -1823,6 +1823,106 @@ class S {
       args: [],
     );
   }
+
+  /// `100% Made in Cameroon`
+  String get onboarding1Title {
+    return Intl.message(
+      '100% Made in Cameroon',
+      name: 'onboarding1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Access the excellence of our terroir. Thamani brings together the best products exclusively designed and processed in Cameroon.`
+  String get onboarding1Description {
+    return Intl.message(
+      'Access the excellence of our terroir. Thamani brings together the best products exclusively designed and processed in Cameroon.',
+      name: 'onboarding1Description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Premium Quality`
+  String get onboarding2Title {
+    return Intl.message(
+      'Premium Quality',
+      name: 'onboarding2Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discover a rigorous selection of high-end local products, combining traditional know-how and modern requirements.`
+  String get onboarding2Description {
+    return Intl.message(
+      'Discover a rigorous selection of high-end local products, combining traditional know-how and modern requirements.',
+      name: 'onboarding2Description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Buy Local`
+  String get onboarding3Title {
+    return Intl.message(
+      'Buy Local',
+      name: 'onboarding3Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Support Cameroonian genius. Shop safely and have the pride of our country delivered directly to your home.`
+  String get onboarding3Description {
+    return Intl.message(
+      'Support Cameroonian genius. Shop safely and have the pride of our country delivered directly to your home.',
+      name: 'onboarding3Description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Started`
+  String get onboardingButtonText {
+    return Intl.message(
+      'Get Started',
+      name: 'onboardingButtonText',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Congratulations!`
+  String get congratulations {
+    return Intl.message(
+      'Congratulations!',
+      name: 'congratulations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You are now logged in! Discover our 100% Made in Cameroon products and start shopping now.`
+  String get loginSuccessMessage {
+    return Intl.message(
+      'You are now logged in! Discover our 100% Made in Cameroon products and start shopping now.',
+      name: 'loginSuccessMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Shopping`
+  String get startShopping {
+    return Intl.message(
+      'Start Shopping',
+      name: 'startShopping',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

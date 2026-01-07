@@ -21,4 +21,5 @@ abstract class AuthProviderBase {
   });
   Future<Response> updateProfile({required User userInfo, required File? file});
   Future<Response> logout();
+  Future<Response> googleAuth({required String accessToken});
 }

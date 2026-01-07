@@ -117,16 +117,33 @@ class AuthService implements AuthProviderBase {
   @override
   Future<Response> updateProfile(
       {required User userInfo, required File? file}) async {
+    // Create user map and exclude profile_photo URL to avoid sending URL instead of file
+    final Map<String, dynamic> userMap = userInfo.toMap();
+    userMap.remove('profile_photo'); // Remove URL from user data
+
     FormData formData = FormData.fromMap({
-      "profile_photo": file != null
-          ? await MultipartFile.fromFile(file.path,
-              filename: 'profile_photo.jpg')
-          : null,
-      ...userInfo.toMap(),
+      if (file != null)
+        "profile_photo": await MultipartFile.fromFile(file.path,
+            filename: 'profile_photo.jpg'),
+      ...userMap,
     });
     final response = await ref
         .read(apiClientProvider)
         .post(AppConstants.updateProfile, data: formData);
+    return response;
+  }
+
+  @override
+  Future<Response> googleAuth({required String accessToken}) async {
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    final response = await ref.read(apiClientProvider).post(
+      AppConstants.googleAuthUrl,
+      data: {
+        "access_token": accessToken,
+        "device_key": fcmToken,
+        "device_type": Platform.isIOS ? 'ios' : 'android',
+      },
+    );
     return response;
   }
 }

@@ -7,10 +7,12 @@ import 'package:gap/gap.dart';
 import 'package:ready_ecommerce/components/ecommerce/app_logo.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_button.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_text_field.dart';
+import 'package:ready_ecommerce/components/ecommerce/google_sign_in_button.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/common/country_controller.dart';
+import 'package:ready_ecommerce/controllers/eCommerce/address/address_controller.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/authentication/authentication_controller.dart';
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
 import 'package:ready_ecommerce/generated/l10n.dart';
@@ -456,7 +458,72 @@ class _SignUpLayoutState extends State<SignUpLayout> {
                         },
                       );
               }),
-            )
+            ),
+            // Divider with "OR" text
+            Gap(24.h),
+            Row(
+              children: [
+                Expanded(
+                  child: Divider(
+                    color: colors(context).hintTextColor,
+                    thickness: 1,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Text(
+                    'OR',
+                    style: AppTextStyle(context).bodyTextSmall.copyWith(
+                          color: colors(context).hintTextColor,
+                        ),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: colors(context).hintTextColor,
+                    thickness: 1,
+                  ),
+                ),
+              ],
+            ),
+            Gap(24.h),
+            // Google Sign-In Button
+            Consumer(
+              builder: (context, ref, _) {
+                final isLoading = ref.watch(authControllerProvider);
+                return GoogleSignInButton(
+                  isLoading: isLoading,
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    ref
+                        .read(authControllerProvider.notifier)
+                        .googleSignIn()
+                        .then((response) {
+                      if (response.isSuccess) {
+                        // Load addresses and navigate to dashboard
+                        ref
+                            .read(addressControllerProvider.notifier)
+                            .getAddress();
+                        context.nav.pushNamedAndRemoveUntil(
+                          Routes.getCoreRouteName(AppConstants.appServiceName),
+                          (route) => false,
+                        );
+                        GlobalFunction.showCustomSnackbar(
+                          message: response.message,
+                          isSuccess: true,
+                        );
+                      } else {
+                        // Show error via snackbar
+                        GlobalFunction.showCustomSnackbar(
+                          message: response.message,
+                          isSuccess: false,
+                        );
+                      }
+                    });
+                  },
+                );
+              },
+            ),
           ],
         ),
       );

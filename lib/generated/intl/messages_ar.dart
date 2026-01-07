@@ -77,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "تأكيد كلمة المرور",
     ),
+    "congratulations": MessageLookupByLibrary.simpleMessage("تهانينا!"),
     "contactVia": MessageLookupByLibrary.simpleMessage("الاتصال عبر"),
     "continueShopping": MessageLookupByLibrary.simpleMessage("مواصلة التسوق"),
     "couponApplyValidation": MessageLookupByLibrary.simpleMessage(
@@ -146,6 +147,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("لغة"),
     "location": MessageLookupByLibrary.simpleMessage("الموقع"),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
+    "loginSuccessMessage": MessageLookupByLibrary.simpleMessage(
+      "لقد قمت بتسجيل الدخول بنجاح! اكتشف منتجاتنا 100% صنع في الكاميرون وابدأ التسوق الآن.",
+    ),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل خروج"),
     "logoutDialogDes": MessageLookupByLibrary.simpleMessage(
       "ستحتاج إلى إعادة إدخال بيانات الاعتماد الخاصة بك للوصول إلى حسابك مرة أخرى. ستكون بيانات حفظك المحلية نظيفة!",
@@ -175,6 +179,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "no": MessageLookupByLibrary.simpleMessage("لا"),
     "office": MessageLookupByLibrary.simpleMessage("مكتب"),
     "onTheWay": MessageLookupByLibrary.simpleMessage("علي الطريق"),
+    "onboarding1Description": MessageLookupByLibrary.simpleMessage(
+      "احصل على أفضل منتجاتنا المحلية. تجمع ثاماني أفضل المنتجات المصممة والمصنعة حصريًا في الكاميرون.",
+    ),
+    "onboarding1Title": MessageLookupByLibrary.simpleMessage(
+      "100% صنع في الكاميرون",
+    ),
+    "onboarding2Description": MessageLookupByLibrary.simpleMessage(
+      "اكتشف مجموعة صارمة من المنتجات المحلية عالية الجودة، تجمع بين الحرفية التقليدية والمتطلبات الحديثة.",
+    ),
+    "onboarding2Title": MessageLookupByLibrary.simpleMessage("جودة ممتازة"),
+    "onboarding3Description": MessageLookupByLibrary.simpleMessage(
+      "ادعم العبقرية الكاميرونية. تسوق بأمان واحصل على فخر بلدنا مباشرة إلى منزلك.",
+    ),
+    "onboarding3Title": MessageLookupByLibrary.simpleMessage("استهلك محليًا"),
+    "onboardingButtonText": MessageLookupByLibrary.simpleMessage("ابدأ الآن"),
     "orderAgain": MessageLookupByLibrary.simpleMessage("أجل مرة أخرى"),
     "orderCancelDialogDes": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك تريد إلغاء هذا الطلب؟",
@@ -284,6 +303,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "size": MessageLookupByLibrary.simpleMessage("مقاس"),
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
     "sortBy": MessageLookupByLibrary.simpleMessage("ترتيب حسب"),
+    "startShopping": MessageLookupByLibrary.simpleMessage("ابدأ التسوق"),
     "startWriting": MessageLookupByLibrary.simpleMessage("ابدأ في الكتابة ..."),
     "status": MessageLookupByLibrary.simpleMessage("حالة"),
     "storeVoucher": MessageLookupByLibrary.simpleMessage("قسيمة المتجر"),

@@ -2,7 +2,7 @@ class AppConstants {
 // Codecanyon
 // https://demo.readyecommerce.app/api
   // static const String baseUrl = 'https://demo.readyecommerce.app/api';
-  static const String baseUrl = 'http://194.163.132.186:8001/api';
+  static const String baseUrl = 'https://test.thamani.shop/api';
   // QA Testing
   //static const String baseUrl = 'https://uat.readyecommerce.app/api';
   // static const String baseUrl = 'http://chat.razinsoft.site/api';
@@ -16,6 +16,7 @@ class AppConstants {
   static const String resetPassword = '$baseUrl/reset-password';
   static const String changePassword = '$baseUrl/change-password';
   static const String updateProfile = '$baseUrl/update-profile';
+  static const String googleAuthUrl = '$baseUrl/auth/google/token';
   static const String getDashboardData = '$baseUrl/home';
   static const String getCategories = '$baseUrl/categories';
   static const String getSubCategories = '$baseUrl/sub-categories';

@@ -91,6 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmPassword": MessageLookupByLibrary.simpleMessage(
       "পাসওয়ার্ড নিশ্চিত করুন",
     ),
+    "congratulations": MessageLookupByLibrary.simpleMessage("অভিনন্দন!"),
     "contactVia": MessageLookupByLibrary.simpleMessage("যোগাযোগ করুন"),
     "continueShopping": MessageLookupByLibrary.simpleMessage(
       "কেনাকাটা চালিয়ে যান",
@@ -170,6 +171,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "language": MessageLookupByLibrary.simpleMessage("ভাষা"),
     "location": MessageLookupByLibrary.simpleMessage("লোকেশন"),
     "login": MessageLookupByLibrary.simpleMessage("প্রবেশ করুন"),
+    "loginSuccessMessage": MessageLookupByLibrary.simpleMessage(
+      "আপনি এখন লগ ইন করেছেন! আমাদের ১০০% ক্যামেরুনে তৈরি পণ্য আবিষ্কার করুন এবং এখনই কেনাকাটা শুরু করুন।",
+    ),
     "logout": MessageLookupByLibrary.simpleMessage("লগ আউট"),
     "logoutDialogDes": MessageLookupByLibrary.simpleMessage(
       "আপনার অ্যাকাউন্টে আবার অ্যাক্সেস করার জন্য আপনাকে আপনার শংসাপত্রগুলি পুনরায় প্রবেশ করতে হবে৷ আপনার স্থানীয় সংরক্ষণ ডেটা পরিষ্কার হবে!",
@@ -206,6 +210,23 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "office": MessageLookupByLibrary.simpleMessage("দপ্তর"),
     "onTheWay": MessageLookupByLibrary.simpleMessage("পথে"),
+    "onboarding1Description": MessageLookupByLibrary.simpleMessage(
+      "আমাদের স্থানীয় সেরা পণ্যগুলি অ্যাক্সেস করুন। থামানি আপনার জন্য ক্যামেরুনে একচেটিয়াভাবে ডিজাইন এবং প্রক্রিয়াজাত সেরা পণ্যগুলি একত্রিত করে।",
+    ),
+    "onboarding1Title": MessageLookupByLibrary.simpleMessage(
+      "১০০% ক্যামেরুনে তৈরি",
+    ),
+    "onboarding2Description": MessageLookupByLibrary.simpleMessage(
+      "উচ্চমানের স্থানীয় পণ্যগুলির একটি কঠোর নির্বাচন আবিষ্কার করুন, যা ঐতিহ্যবাহী কারুশিল্প এবং আধুনিক প্রয়োজনীয়তা একত্রিত করে।",
+    ),
+    "onboarding2Title": MessageLookupByLibrary.simpleMessage("প্রিমিয়াম মান"),
+    "onboarding3Description": MessageLookupByLibrary.simpleMessage(
+      "ক্যামেরুনীয় প্রতিভা সমর্থন করুন। নিরাপদে কেনাকাটা করুন এবং আমাদের দেশের গর্ব সরাসরি আপনার বাড়িতে পৌঁছে দিন।",
+    ),
+    "onboarding3Title": MessageLookupByLibrary.simpleMessage(
+      "স্থানীয় ক্রয় করুন",
+    ),
+    "onboardingButtonText": MessageLookupByLibrary.simpleMessage("শুরু করুন"),
     "orderAgain": MessageLookupByLibrary.simpleMessage("আবার অর্ডার"),
     "orderCancelDialogDes": MessageLookupByLibrary.simpleMessage(
       "আপনি কি নিশ্চিত এই অর্ডার বাতিল করতে চান?",
@@ -319,6 +340,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "skip": MessageLookupByLibrary.simpleMessage("দেখুন"),
     "sortBy": MessageLookupByLibrary.simpleMessage("ক্রমানুসার"),
+    "startShopping": MessageLookupByLibrary.simpleMessage("কেনাকাটা শুরু করুন"),
     "startWriting": MessageLookupByLibrary.simpleMessage("লেখা শুরু করুন ..."),
     "status": MessageLookupByLibrary.simpleMessage("স্থিতি"),
     "storeVoucher": MessageLookupByLibrary.simpleMessage("স্টোর ভাউচার"),

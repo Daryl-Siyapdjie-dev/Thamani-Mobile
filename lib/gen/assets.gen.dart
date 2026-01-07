@@ -39,6 +39,10 @@ class $AssetsPngGen {
   AssetGenImage get confirmOtp =>
       const AssetGenImage('assets/png/confirm_otp.png');
 
+  /// File path: assets/png/congratilation.png
+  AssetGenImage get congratilation =>
+      const AssetGenImage('assets/png/congratilation.png');
+
   /// File path: assets/png/empty_cart.png
   AssetGenImage get emptyCart =>
       const AssetGenImage('assets/png/empty_cart.png');
@@ -66,9 +70,17 @@ class $AssetsPngGen {
   AssetGenImage get onboardingTwo =>
       const AssetGenImage('assets/png/onboarding_two.png');
 
+  /// File path: assets/png/payment_succesfull.png
+  AssetGenImage get paymentSuccesfull =>
+      const AssetGenImage('assets/png/payment_succesfull.png');
+
   /// File path: assets/png/placeholder_image.png
   AssetGenImage get placeholderImage =>
       const AssetGenImage('assets/png/placeholder_image.png');
+
+  /// File path: assets/png/return_selected.png
+  AssetGenImage get returnSelected =>
+      const AssetGenImage('assets/png/return_selected.png');
 
   /// File path: assets/png/searce_result.png
   AssetGenImage get searceResult =>
@@ -83,23 +95,26 @@ class $AssetsPngGen {
 
   /// List of all assets
   List<AssetGenImage> get values => [
-        bannerImage,
-        call,
-        card,
-        cash,
-        confirmOtp,
-        emptyCart,
-        favicon,
-        messenger,
-        noInternetConnection,
-        onboardingOne,
-        onboardingThree,
-        onboardingTwo,
-        placeholderImage,
-        searceResult,
-        splashLogo,
-        whatsapp
-      ];
+    bannerImage,
+    call,
+    card,
+    cash,
+    confirmOtp,
+    congratilation,
+    emptyCart,
+    favicon,
+    messenger,
+    noInternetConnection,
+    onboardingOne,
+    onboardingThree,
+    onboardingTwo,
+    paymentSuccesfull,
+    placeholderImage,
+    returnSelected,
+    searceResult,
+    splashLogo,
+    whatsapp,
+  ];
 }
 
 class $AssetsSvgGen {
@@ -234,6 +249,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/message.svg
   String get message => 'assets/svg/message.svg';
 
+  /// File path: assets/svg/money-change.svg
+  String get moneyChange => 'assets/svg/money-change.svg';
+
   /// File path: assets/svg/notification.svg
   String get notification => 'assets/svg/notification.svg';
 
@@ -302,76 +320,77 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
-        activeBag,
-        activeCategories,
-        activeFavorite,
-        activeHome,
-        activeMore,
-        activeRadio,
-        activeShop,
-        activeSupport,
-        arrowRight,
-        bag,
-        blog,
-        cancelIcon,
-        cart,
-        cash,
-        clock,
-        confirmOtp,
-        cuppon,
-        currency,
-        doneIcon,
-        edit,
-        envelope,
-        eye,
-        facebook,
-        fillLocation,
-        filter,
-        gift,
-        grid,
-        heart,
-        image,
-        inactiveBag,
-        inactiveCategories,
-        inactiveFavorite,
-        inactiveHome,
-        inactiveMore,
-        inactiveShop,
-        inactiveSupport,
-        key,
-        linkedIn,
-        list,
-        location,
-        locationPurple,
-        logout,
-        message,
-        notification,
-        phone,
-        pinterest,
-        privacy,
-        profile,
-        radio,
-        radioIcon,
-        receipt,
-        recoverpPassword,
-        refund,
-        search,
-        searchHome,
-        sendRight,
-        share,
-        shieldCheck,
-        shieldTimes,
-        support,
-        terms,
-        ticket,
-        translate,
-        trash,
-        twitter
-      ];
+    activeBag,
+    activeCategories,
+    activeFavorite,
+    activeHome,
+    activeMore,
+    activeRadio,
+    activeShop,
+    activeSupport,
+    arrowRight,
+    bag,
+    blog,
+    cancelIcon,
+    cart,
+    cash,
+    clock,
+    confirmOtp,
+    cuppon,
+    currency,
+    doneIcon,
+    edit,
+    envelope,
+    eye,
+    facebook,
+    fillLocation,
+    filter,
+    gift,
+    grid,
+    heart,
+    image,
+    inactiveBag,
+    inactiveCategories,
+    inactiveFavorite,
+    inactiveHome,
+    inactiveMore,
+    inactiveShop,
+    inactiveSupport,
+    key,
+    linkedIn,
+    list,
+    location,
+    locationPurple,
+    logout,
+    message,
+    moneyChange,
+    notification,
+    phone,
+    pinterest,
+    privacy,
+    profile,
+    radio,
+    radioIcon,
+    receipt,
+    recoverpPassword,
+    refund,
+    search,
+    searchHome,
+    sendRight,
+    share,
+    shieldCheck,
+    shieldTimes,
+    support,
+    terms,
+    ticket,
+    translate,
+    trash,
+    twitter,
+  ];
 }
 
 class Assets {
-  Assets._();
+  const Assets._();
 
   static const $AssetsJsonGen json = $AssetsJsonGen();
   static const $AssetsPngGen png = $AssetsPngGen();
@@ -379,11 +398,7 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(
-    this._assetName, {
-    this.size,
-    this.flavors = const {},
-  });
+  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
 
   final String _assetName;
 
@@ -411,7 +426,7 @@ class AssetGenImage {
     bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
-    FilterQuality filterQuality = FilterQuality.low,
+    FilterQuality filterQuality = FilterQuality.medium,
     int? cacheWidth,
     int? cacheHeight,
   }) {
@@ -443,15 +458,8 @@ class AssetGenImage {
     );
   }
 
-  ImageProvider provider({
-    AssetBundle? bundle,
-    String? package,
-  }) {
-    return AssetImage(
-      _assetName,
-      bundle: bundle,
-      package: package,
-    );
+  ImageProvider provider({AssetBundle? bundle, String? package}) {
+    return AssetImage(_assetName, bundle: bundle, package: package);
   }
 
   String get path => _assetName;

@@ -229,5 +229,15 @@
   "collectionAddress": "Collection Address",
   "cancellationReason": "Cancellation Reason",
   "myDigitalProducts": "My Digital Products",
-  "thisIsAdigitalProduct": "This is a digital product, you can't change the quantity."
+  "thisIsAdigitalProduct": "This is a digital product, you can't change the quantity.",
+  "onboarding1Title": "100% Made in Cameroon",
+  "onboarding1Description": "Access the excellence of our terroir. Thamani brings together the best products exclusively designed and processed in Cameroon.",
+  "onboarding2Title": "Premium Quality",
+  "onboarding2Description": "Discover a rigorous selection of high-end local products, combining traditional know-how and modern requirements.",
+  "onboarding3Title": "Buy Local",
+  "onboarding3Description": "Support Cameroonian genius. Shop safely and have the pride of our country delivered directly to your home.",
+  "onboardingButtonText": "Get Started",
+  "congratulations": "Congratulations!",
+  "loginSuccessMessage": "You are now logged in! Discover our 100% Made in Cameroon products and start shopping now.",
+  "startShopping": "Start Shopping"
 }

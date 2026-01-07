@@ -4,6 +4,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:ready_ecommerce/components/ecommerce/custom_button.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_dialog.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
@@ -31,6 +32,7 @@ class _WebPayementScreenState extends ConsumerState<WebPayementScreen> {
   bool _isLoading = true;
   double _loadingProgress = 0.0;
   String _currentUrl = '';
+  bool _hasShownSuccessDialog = false;
 
   @override
   Widget build(BuildContext context) {
@@ -144,18 +146,29 @@ class _WebPayementScreenState extends ConsumerState<WebPayementScreen> {
                         },
                         onLoadStart: (controller, url) {
                           String onLoadUrl = url.toString();
+                          debugPrint('🔍 onLoadStart URL: $onLoadUrl');
+
                           setState(() {
                             _currentUrl = onLoadUrl;
                             _isLoading = true;
                           });
 
-                          if (onLoadUrl.trim().contains('/payment/success')) {
-                            _buildRouting();
-                            _buildPaymentDoneDialog();
+                          if (onLoadUrl.trim().contains('/payment/success') && !_hasShownSuccessDialog) {
+                            debugPrint('✅ Payment success detected! Showing dialog...');
+                            _hasShownSuccessDialog = true;
+                            // Use Future.delayed to ensure the dialog shows after frame is built
+                            Future.delayed(Duration.zero, () {
+                              if (mounted) {
+                                debugPrint('📱 Calling _buildPaymentDoneDialog()');
+                                _buildPaymentDoneDialog();
+                              }
+                            });
                           } else if (onLoadUrl.contains('payment/fail')) {
+                            debugPrint('❌ Payment failed detected');
                             _buildRouting();
                             _buildPaymentFailedDialog();
                           } else if (onLoadUrl.contains('payment/cancel')) {
+                            debugPrint('🚫 Payment cancelled detected');
                             _buildRouting();
                             _buildPaymentFailedDialog();
                           }
@@ -270,17 +283,75 @@ class _WebPayementScreenState extends ConsumerState<WebPayementScreen> {
   }
 
   _buildPaymentDoneDialog() {
+    debugPrint('🎉 _buildPaymentDoneDialog() called');
+    debugPrint('🔧 ContextLess.context: ${ContextLess.context}');
+    debugPrint('🔧 mounted: $mounted');
+
     return showDialog(
+      barrierDismissible: false,
       context: ContextLess.context,
-      builder: (_) => CustomDialog(
-        title: S.of(context).paymentSuccess,
-        des: S.of(context).paymentSuccessDes,
-        assetName: Assets.svg.doneIcon,
-        buttonText: S.of(context).close,
-        callback: () {
-          ContextLess.context.nav.pop();
-        },
-      ),
+      builder: (_) {
+        debugPrint('🏗️ Building payment success dialog...');
+        return Dialog(
+          backgroundColor: Theme.of(ContextLess.context).scaffoldBackgroundColor,
+          surfaceTintColor: colors(ContextLess.context).light,
+          insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 24.w,
+              vertical: 40.h,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Payment Success Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Image.asset(
+                    Assets.png.paymentSuccesfull.path,
+                    height: 200.h,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Gap(24.h),
+                Text(
+                  S.of(context).paymentSuccess,
+                  style: AppTextStyle(context).title.copyWith(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: EcommerceAppColor.green,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Gap(16.h),
+                Text(
+                  S.of(context).paymentSuccessDes,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyle(context).bodyText.copyWith(
+                    fontSize: 16.sp,
+                  ),
+                ),
+                Gap(32.h),
+                CustomButton(
+                  buttonText: S.of(context).close,
+                  buttonColor: colors(context).primaryColor,
+                  onPressed: () {
+                    ContextLess.context.nav.pop(); // Close dialog
+                    _buildRouting(); // Then redirect to dashboard
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
