@@ -2,6 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="Thamani"
         android:name="${applicationName}"
@@ -37,7 +38,7 @@
             </intent-filter>
               <meta-data
               android:name="com.google.firebase.messaging.default_notification_channel_id"
-              android:value="hight_importance_channel"
+              android:value="high_importance_channel"
               />
         </activity>
         <!-- Don't delete the meta-data below.
@@ -45,6 +46,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Firebase notification icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/notification_icon" />
     </application>
     <queries>
         <intent>

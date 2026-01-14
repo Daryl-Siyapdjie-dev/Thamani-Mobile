@@ -50,23 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCnwkduK9tqESOOZI_-MemybQ4CEJoimoY',
-    appId: '1:253369840347:android:e173c61723fcb1ae49d2fe',
-    messagingSenderId: '253369840347',
-    projectId: 'ready-ecommerce',
-    storageBucket: 'ready-ecommerce.firebasestorage.app',
+    apiKey: 'AIzaSyBDJG1MSSAQ1rHXez23vo-Uso7ppwBrM7c',
+    appId: '1:272805040726:android:9b029e1b8a2cb56d16e1f7',
+    messagingSenderId: '272805040726',
+    projectId: 'thamani-81ce7',
+    storageBucket: 'thamani-81ce7.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAuH9hk9WcmrdbOQtYtcAF_XTjYpxveep0',
-    appId: '1:253369840347:ios:ad14ae85cdc8540749d2fe',
-    messagingSenderId: '253369840347',
-    projectId: 'ready-ecommerce',
-    storageBucket: 'ready-ecommerce.firebasestorage.app',
-    androidClientId:
-        '253369840347-ro95uv71lv9a0ehnclntuhjk5f13jl1e.apps.googleusercontent.com',
-    iosClientId:
-        '253369840347-jn11cep1csb4d1vlmb5frgbkn33jh98t.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBDJG1MSSAQ1rHXez23vo-Uso7ppwBrM7c',
+    appId: '1:272805040726:android:9b029e1b8a2cb56d16e1f7',
+    messagingSenderId: '272805040726',
+    projectId: 'thamani-81ce7',
+    storageBucket: 'thamani-81ce7.firebasestorage.app',
     iosBundleId: 'com.thamani.app',
   );
 }

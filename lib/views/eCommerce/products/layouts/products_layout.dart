@@ -297,7 +297,7 @@ class _EcommerceProductsLayoutState
               ),
             ],
           ),
-          Gap(8.h),
+          Gap(7.h),
           Visibility(
               visible: widget.sortType != null,
               child: Divider(

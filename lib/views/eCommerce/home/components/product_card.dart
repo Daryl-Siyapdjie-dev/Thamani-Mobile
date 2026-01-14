@@ -75,24 +75,6 @@ class ProductCard extends StatelessWidget {
         ),
         if (product.discountPercentage != 0)
           _buildDiscountBadge(context: context),
-        if (product.quantity == 0) ...[
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.r),
-                color: Colors.black.withOpacity(0.6),
-              ),
-              child: Center(
-                child: Text(
-                  'Out of Stock',
-                  style: AppTextStyle(context).subTitle.copyWith(
-                        color: colors(context).light,
-                      ),
-                ),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }
@@ -118,37 +100,25 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildProductInformation({required BuildContext context}) {
-    return Stack(
-      children: [
-        SizedBox(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Gap(5.h),
-              Text(
-                '${product.name}\n',
-                style: AppTextStyle(context)
-                    .bodyText
-                    .copyWith(fontWeight: FontWeight.w500),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Gap(10.h),
-              _buildReviewAndSoldCount(context: context),
-              Gap(product.discountPrice > 0 ? 8.h : 10.h),
-              _buildPriceAndAddToCart(context: context),
-            ],
+    return SizedBox(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Gap(5.h),
+          Text(
+            '${product.name}\n',
+            style: AppTextStyle(context)
+                .bodyText
+                .copyWith(fontWeight: FontWeight.w500),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        if (product.quantity == 0 || product.quantity < 0)
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                color: colors(context).accentColor!.withOpacity(0.4),
-              ),
-            ),
-          ),
-      ],
+          Gap(10.h),
+          _buildReviewAndSoldCount(context: context),
+          Gap(product.discountPrice > 0 ? 8.h : 10.h),
+          _buildPriceAndAddToCart(context: context),
+        ],
+      ),
     );
   }
 

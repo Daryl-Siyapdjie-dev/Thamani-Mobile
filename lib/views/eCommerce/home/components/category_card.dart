@@ -28,11 +28,13 @@ class CategoryCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: colors(context).accentColor!)),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.w),
-                height: 70.h,
-                width: 70.w,
+                height: 65.h,
+                width: 65.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   image: DecorationImage(
@@ -41,16 +43,22 @@ class CategoryCard extends StatelessWidget {
                   ),
                 ),
               ),
+              Gap(4.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.w),
+                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                 child: Text(
                   category.name,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style:
-                      AppTextStyle(context).bodyText.copyWith(fontSize: 14.sp),
+                      AppTextStyle(context).bodyText.copyWith(
+                        fontSize: 12.sp,
+                        height: 1.2,
+                      ),
                 ),
               ),
-              Gap(4.w)
+              Gap(4.h),
             ],
           ),
         ),

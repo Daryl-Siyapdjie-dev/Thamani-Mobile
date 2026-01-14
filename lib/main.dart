@@ -26,8 +26,7 @@ void main() async {
   await setupFlutterNotifications();
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   firebaseMessagingForgroundHandler();
-  String? fcmToken = await FirebaseMessaging.instance.getToken();
-  debugPrint("FCM Token: $fcmToken");
+  await FirebaseMessaging.instance.getToken();
   await FlutterDownloader.initialize(
     debug: true,
     ignoreSsl: false,
@@ -72,7 +71,7 @@ class MyApp extends StatelessWidget {
                 app: MaterialApp(
                   showPerformanceOverlay: false,
                   debugShowCheckedModeBanner: false,
-                  title: 'Ready eCommerce',
+                  title: 'Thamani',
                   navigatorKey: GlobalFunction.navigatorKey,
                   locale: resolveLocal(langCode: appLocal ?? 'fr'),
                   localizationsDelegates: const [

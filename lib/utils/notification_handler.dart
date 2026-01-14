@@ -8,16 +8,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await setupFlutterNotifications();
   showFlutterNotification(message);
-  debugPrint('Handling a background message ${message.messageId}');
 }
 
 Future<void> firebaseMessagingForgroundHandler() async {
   FirebaseMessaging.onMessage.listen((message) {
-    debugPrint(message.data.toString());
-    debugPrint(message.data.toString());
-    debugPrint(message.toString());
-    debugPrint('Handling a ForeGround message ${message.messageId}');
-    debugPrint('Handling a ForeGround message ${message.notification}');
     showFlutterNotification(message);
   });
 }

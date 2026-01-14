@@ -99,17 +99,21 @@ class AppBottomNavbar extends ConsumerWidget {
                   right: 0,
                   child: Consumer(
                     builder: (context, ref, _) {
-                      return ref.watch(cartController).cartItems.isNotEmpty
+                      final cartState = ref.watch(cartController);
+
+                      // Calculate total number of products across all shops
+                      final totalProductsCount = cartState.cartItems.fold<int>(
+                        0,
+                        (sum, cartItem) => sum + cartItem.cartProduct.length,
+                      );
+
+                      return totalProductsCount > 0
                           ? CircleAvatar(
                               radius: 7.r,
                               backgroundColor: colors(context).errorColor,
                               child: Center(
                                 child: Text(
-                                  ref
-                                      .watch(cartController.notifier)
-                                      .cartItems
-                                      .length
-                                      .toString(),
+                                  totalProductsCount.toString(),
                                   style: AppTextStyle(context)
                                       .bodyTextSmall
                                       .copyWith(fontSize: 10)

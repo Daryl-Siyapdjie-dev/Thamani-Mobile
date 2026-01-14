@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -39,14 +38,11 @@ class GoogleSignInService {
       final GoogleSignInAccount? account = await _googleSignIn.signIn();
 
       if (account == null) {
-        debugPrint('Google Sign-In cancelled by user');
         return null;
       }
 
-      debugPrint('Google Sign-In successful: ${account.email}');
       return account;
     } catch (error) {
-      debugPrint('Google Sign-In Error: $error');
       return null;
     }
   }
@@ -57,16 +53,8 @@ class GoogleSignInService {
   Future<String?> getGoogleAccessToken(GoogleSignInAccount account) async {
     try {
       final GoogleSignInAuthentication auth = await account.authentication;
-
-      // Log token info for debugging (only in debug mode)
-      if (kDebugMode) {
-        debugPrint('Access Token available: ${auth.accessToken != null}');
-        debugPrint('ID Token available: ${auth.idToken != null}');
-      }
-
       return auth.accessToken;
     } catch (error) {
-      debugPrint('Error getting Google access token: $error');
       return null;
     }
   }
@@ -76,9 +64,8 @@ class GoogleSignInService {
   Future<void> signOutGoogle() async {
     try {
       await _googleSignIn.signOut();
-      debugPrint('Google Sign-Out successful');
     } catch (error) {
-      debugPrint('Google Sign-Out Error: $error');
+      // Silent error handling
     }
   }
 
@@ -87,9 +74,8 @@ class GoogleSignInService {
   Future<void> disconnectGoogle() async {
     try {
       await _googleSignIn.disconnect();
-      debugPrint('Google disconnect successful');
     } catch (error) {
-      debugPrint('Google disconnect Error: $error');
+      // Silent error handling
     }
   }
 
@@ -99,7 +85,6 @@ class GoogleSignInService {
     try {
       return await _googleSignIn.isSignedIn();
     } catch (error) {
-      debugPrint('Error checking Google sign-in status: $error');
       return false;
     }
   }
@@ -110,7 +95,6 @@ class GoogleSignInService {
     try {
       return await _googleSignIn.signInSilently();
     } catch (error) {
-      debugPrint('Silent Google Sign-In Error: $error');
       return null;
     }
   }

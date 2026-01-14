@@ -35,35 +35,35 @@ class _SplashLayoutState extends ConsumerState<SplashLayout> {
         ref
             .read(masterControllerProvider.notifier)
             .getMasterData()
-            .then((response) => {
-                  if (response?.data.themeColors.primaryColor != null)
-                    {
-                      ref.read(hiveServiceProvider).setPrimaryColor(
-                          color: response!.data.themeColors.primaryColor),
-                    },
-                  if (response?.data.appLogo != null)
-                    {
-                      ref
-                          .read(hiveServiceProvider)
-                          .setAppLogo(logo: response!.data.appLogo)
-                    },
-                  if (response?.data.appName != null)
-                    {
-                      ref
-                          .read(hiveServiceProvider)
-                          .setAppName(name: response!.data.appName),
-                    },
-                  if (response?.data.splashLogo != null)
-                    {
-                      ref
-                          .read(hiveServiceProvider)
-                          .setSplashLogo(splashLogo: response!.data.splashLogo),
-                    }
+            .then((response) {
+                  if (!mounted) return;
+
+                  if (response?.data.themeColors.primaryColor != null) {
+                    ref.read(hiveServiceProvider).setPrimaryColor(
+                        color: response!.data.themeColors.primaryColor);
+                  }
+                  if (response?.data.appLogo != null) {
+                    ref
+                        .read(hiveServiceProvider)
+                        .setAppLogo(logo: response!.data.appLogo);
+                  }
+                  if (response?.data.appName != null) {
+                    ref
+                        .read(hiveServiceProvider)
+                        .setAppName(name: response!.data.appName);
+                  }
+                  if (response?.data.splashLogo != null) {
+                    ref
+                        .read(hiveServiceProvider)
+                        .setSplashLogo(splashLogo: response!.data.splashLogo);
+                  }
                 });
         Future.wait([
           ref.read(hiveServiceProvider).loadTokenAndUser(),
         ]).then((data) {
           Future.delayed(const Duration(seconds: 3), () {
+            if (!mounted) return;
+
             if (data.first![0] == true &&
                 (data.first![1] == null || data.first![2] == null)) {
               context.nav.pushNamedAndRemoveUntil(

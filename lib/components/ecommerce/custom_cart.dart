@@ -44,13 +44,21 @@ class CustomCartWidget extends StatelessWidget {
           right: 5.w,
           top: 5.h,
           child: Consumer(builder: (context, ref, _) {
-            return ref.watch(cartController).cartItems.isNotEmpty
+            final cartState = ref.watch(cartController);
+
+            // Calculate total number of products across all shops
+            final totalProductsCount = cartState.cartItems.fold<int>(
+              0,
+              (sum, cartItem) => sum + cartItem.cartProduct.length,
+            );
+
+            return totalProductsCount > 0
                 ? CircleAvatar(
                     radius: 8.r,
                     backgroundColor: colors(context).errorColor,
                     child: Center(
                       child: Text(
-                        ref.watch(cartController).cartItems.length.toString(),
+                        totalProductsCount.toString(),
                         style: AppTextStyle(context).bodyTextSmall.copyWith(
                             color: colors(context).light, fontSize: 10.sp),
                       ),

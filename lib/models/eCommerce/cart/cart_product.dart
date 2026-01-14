@@ -36,6 +36,18 @@ class CartItem {
     data['products'] = cartProduct.map((product) => product.toJson()).toList();
     return data;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CartItem) return false;
+
+    return other.shopId == shopId &&
+           other.cartProduct.length == cartProduct.length;
+  }
+
+  @override
+  int get hashCode => Object.hash(shopId, cartProduct.length);
 }
 
 class CartProduct {

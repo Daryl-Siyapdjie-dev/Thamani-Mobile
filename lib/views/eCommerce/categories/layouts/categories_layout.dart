@@ -19,7 +19,20 @@ class EcommerceCategoriesLayout extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    int columnCount = 4;
+    // Responsive column count based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    int columnCount;
+
+    if (screenWidth < 360) {
+      columnCount = 2; // Small phones
+    } else if (screenWidth < 600) {
+      columnCount = 3; // Medium phones (Pixel 4, etc.)
+    } else if (screenWidth < 900) {
+      columnCount = 4; // Large phones / Small tablets
+    } else {
+      columnCount = 5; // Tablets
+    }
+
     bool isDark =
         Theme.of(context).scaffoldBackgroundColor == EcommerceAppColor.black;
     return LoadingWrapperWidget(
@@ -46,7 +59,8 @@ class EcommerceCategoriesLayout extends ConsumerWidget {
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisSpacing: 15.h,
                       crossAxisSpacing: 0.w,
-                      childAspectRatio: 90.w / 105.w,
+                      // Adjusted aspect ratio for better readability
+                      childAspectRatio: columnCount <= 3 ? 0.80 : 0.85,
                       crossAxisCount: columnCount,
                     ),
                     itemCount: categoryList.length,

@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
 import 'package:ready_ecommerce/routes.dart';
 import 'package:ready_ecommerce/utils/global_function.dart';
@@ -17,15 +15,20 @@ class ApiInterceptors {
   }
 
   static void _addLoggerInterceptor(Dio dio) {
-    dio.interceptors.add(PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      error: true,
-      compact: true,
-      maxWidth: 90,
-    ));
+    // Logger disabled for production to avoid exposing sensitive data
+    // (tokens, access_tokens, device_keys, etc.)
+    // To enable logging during development, uncomment the code below:
+    // if (kDebugMode) {
+    //   dio.interceptors.add(PrettyDioLogger(
+    //     requestHeader: true,
+    //     requestBody: true,
+    //     responseBody: true,
+    //     responseHeader: false,
+    //     error: true,
+    //     compact: true,
+    //     maxWidth: 90,
+    //   ));
+    // }
   }
 
   static void _addResponseHandlerInterceptor(Dio dio) {
@@ -38,15 +41,12 @@ class ApiInterceptors {
             final dataString = response.data as String;
             // Check if response is HTML (common indicators)
             final trimmedData = dataString.trim();
-            if (trimmedData.startsWith('<!DOCTYPE') || 
+            if (trimmedData.startsWith('<!DOCTYPE') ||
                 trimmedData.startsWith('<html') ||
                 trimmedData.toLowerCase().startsWith('<head>') ||
                 trimmedData.toLowerCase().contains('<!doctype html>') ||
                 (trimmedData.startsWith('<') && trimmedData.contains('</html>'))) {
               // Server returned HTML instead of JSON (likely 404, redirect, or wrong endpoint)
-              debugPrint('ERROR: Server returned HTML instead of JSON for URL: ${response.requestOptions.uri}');
-              debugPrint('Response status: ${response.statusCode}');
-              debugPrint('Response headers: ${response.headers}');
               handler.reject(
                 DioException(
                   requestOptions: response.requestOptions,
@@ -121,19 +121,12 @@ class ApiInterceptors {
             }
             
             final isHtml = responseData != null && (
-              responseData.trim().startsWith('<!DOCTYPE') || 
+              responseData.trim().startsWith('<!DOCTYPE') ||
               responseData.trim().startsWith('<html') ||
               responseData.trim().toLowerCase().contains('<!doctype html>') ||
               responseData.trim().toLowerCase().contains('<head>')
             );
-            
-            debugPrint('═══════════════════════════════════════════════════════════');
-            debugPrint('ERROR: JSON Parsing failed for URL: ${error.requestOptions.uri}');
-            debugPrint('Error type: ${error.type}');
-            debugPrint('Response status: ${error.response?.statusCode}');
-            debugPrint('Is HTML response: $isHtml');
-            debugPrint('═══════════════════════════════════════════════════════════');
-            
+
             // This is a JSON parsing error, likely because server returned HTML
             final dioError = DioException(
               requestOptions: error.requestOptions,

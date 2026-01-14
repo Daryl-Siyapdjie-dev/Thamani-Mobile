@@ -95,23 +95,6 @@ class ListProductCard extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
-          if (product.quantity == 0)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.r),
-                  color: Colors.black.withOpacity(0.6),
-                ),
-                child: Center(
-                  child: Text(
-                    'Out of Stock',
-                    style: AppTextStyle(context).subTitle.copyWith(
-                          color: colors(context).light,
-                        ),
-                  ),
-                ),
-              ),
-            ),
           if (product.discountPercentage != 0)
             Positioned(
               top: 4.h,

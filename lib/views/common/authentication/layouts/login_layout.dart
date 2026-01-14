@@ -52,19 +52,20 @@ class _LoginLayoutState extends State<LoginLayout> {
   }
 
   // Show congratulations dialog after successful login
-  void _showCongratulationsDialog(WidgetRef ref) {
+  void _showCongratulationsDialog(BuildContext ctx, WidgetRef ref) {
     debugPrint('🎉 Showing congratulations dialog');
 
-    // Use addPostFrameCallback to ensure the dialog shows after current frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
+    // Load addresses first
+    ref.read(addressControllerProvider.notifier).getAddress();
 
-      showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) => Dialog(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          surfaceTintColor: colors(context).light,
+    // Show dialog immediately - simpler and more stable
+    showDialog(
+      barrierDismissible: false,
+      context: ctx,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: Theme.of(ctx).scaffoldBackgroundColor,
+          surfaceTintColor: colors(ctx).light,
           insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
@@ -88,33 +89,31 @@ class _LoginLayoutState extends State<LoginLayout> {
                 ),
                 Gap(24.h),
                 Text(
-                  S.of(context).congratulations,
-                  style: AppTextStyle(context).title.copyWith(
+                  S.of(ctx).congratulations,
+                  style: AppTextStyle(ctx).title.copyWith(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
-                        color: colors(context).primaryColor,
+                        color: colors(ctx).primaryColor,
                       ),
                   textAlign: TextAlign.center,
                 ),
                 Gap(16.h),
                 Text(
-                  S.of(context).loginSuccessMessage,
+                  S.of(ctx).loginSuccessMessage,
                   textAlign: TextAlign.center,
-                  style: AppTextStyle(context).bodyText.copyWith(
+                  style: AppTextStyle(ctx).bodyText.copyWith(
                         fontSize: 16.sp,
                       ),
                 ),
                 Gap(32.h),
                 CustomButton(
-                  buttonText: S.of(context).startShopping,
-                  buttonColor: colors(context).primaryColor,
+                  buttonText: S.of(ctx).startShopping,
+                  buttonColor: colors(ctx).primaryColor,
                   onPressed: () {
-                    debugPrint('✅ User clicked Start Shopping button');
-                    Navigator.of(context).pop(); // Close dialog
-                    // Load addresses AFTER dialog is closed
-                    ref.read(addressControllerProvider.notifier).getAddress();
+                    debugPrint('✅ User clicked start shopping');
+                    Navigator.of(dialogContext).pop(); // Close dialog
                     // Navigate to dashboard
-                    context.nav.pushNamedAndRemoveUntil(
+                    ctx.nav.pushNamedAndRemoveUntil(
                       Routes.getCoreRouteName(AppConstants.appServiceName),
                       (route) => false,
                     );
@@ -123,9 +122,9 @@ class _LoginLayoutState extends State<LoginLayout> {
               ],
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 
   @override
@@ -133,6 +132,7 @@ class _LoginLayoutState extends State<LoginLayout> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         bottomNavigationBar: SizedBox(
           height: 60.h,
           child: Center(
@@ -296,8 +296,8 @@ class _LoginLayoutState extends State<LoginLayout> {
                             )
                             .then((response) {
                           if (response.isSuccess) {
-                            // Show congratulations dialog instead of direct navigation
-                            _showCongratulationsDialog(ref);
+                            // Show congratulations dialog
+                            _showCongratulationsDialog(context, ref);
                           }
                         });
                       }
@@ -345,8 +345,8 @@ class _LoginLayoutState extends State<LoginLayout> {
                       .googleSignIn()
                       .then((response) {
                     if (response.isSuccess) {
-                      // Show congratulations dialog instead of direct navigation
-                      _showCongratulationsDialog(ref);
+                      // Show congratulations dialog
+                      _showCongratulationsDialog(context, ref);
                     } else {
                       // Show error via snackbar
                       GlobalFunction.showCustomSnackbar(
