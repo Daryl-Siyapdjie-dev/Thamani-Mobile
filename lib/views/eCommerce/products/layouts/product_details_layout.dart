@@ -190,20 +190,41 @@ class _EcommerceProductDetailsLayoutState
             if (productDetails.product.isDigital == false)
               Flexible(
                 flex: 1,
-                child: CustomTransparentButton(
-                  buttonTextColor: colors(context).primaryColor,
-                  borderColor: colors(context).primaryColor,
-                  buttonText: S.of(context).addToCart,
-                  onTap: () => _onTapCart(productDetails, false),
+                child: AbsorbPointer(
+                  absorbing: productDetails.product.quantity <= 0,
+                  child: CustomTransparentButton(
+                    buttonTextColor: productDetails.product.quantity <= 0
+                        ? ColorTween(
+                            begin: colors(context).primaryColor,
+                            end: colors(context).light,
+                          ).lerp(0.5)
+                        : colors(context).primaryColor,
+                    borderColor: productDetails.product.quantity <= 0
+                        ? ColorTween(
+                            begin: colors(context).primaryColor,
+                            end: colors(context).light,
+                          ).lerp(0.5)
+                        : colors(context).primaryColor,
+                    buttonText: S.of(context).addToCart,
+                    onTap: () => _onTapCart(productDetails, false),
+                  ),
                 ),
               ),
             Gap(10.w),
             Flexible(
               flex: 1,
-              child: CustomButton(
-                  buttonText: S.of(context).buyNow,
-                  buttonColor: colors(context).primaryColor,
-                  onPressed: () => _onTapCart(productDetails, true)),
+              child: AbsorbPointer(
+                absorbing: productDetails.product.quantity <= 0,
+                child: CustomButton(
+                    buttonText: S.of(context).buyNow,
+                    buttonColor: productDetails.product.quantity <= 0
+                        ? ColorTween(
+                            begin: colors(context).primaryColor,
+                            end: colors(context).light,
+                          ).lerp(0.5)
+                        : colors(context).primaryColor,
+                    onPressed: () => _onTapCart(productDetails, true)),
+              ),
             ),
           ],
         ),

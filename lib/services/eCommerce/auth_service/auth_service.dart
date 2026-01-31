@@ -135,19 +135,17 @@ class AuthService implements AuthProviderBase {
 
   @override
   Future<Response> googleAuth({required String accessToken}) async {
+    // Get FCM token for push notifications (same as login/signup)
     String? fcmToken = await FirebaseMessaging.instance.getToken();
-
-    final requestData = {
-      "access_token": accessToken,
-      "device_key": fcmToken,
-      "device_type": Platform.isIOS ? 'ios' : 'android',
-    };
 
     final response = await ref.read(apiClientProvider).post(
       AppConstants.googleAuthUrl,
-      data: requestData,
+      data: {
+        "access_token": accessToken,
+        "device_key": fcmToken,
+        "device_type": Platform.isIOS ? 'ios' : 'android',
+      },
     );
-
     return response;
   }
 }

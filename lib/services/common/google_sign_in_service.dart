@@ -1,67 +1,46 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-/// GoogleSignIn singleton instance
-/// Configured with OAuth 2.0 Client ID for Android
-/// Following official google_sign_in package documentation
-final GoogleSignIn _googleSignIn = GoogleSignIn(
-  // OAuth 2.0 scopes
-  scopes: <String>[
-    'email',
-    'profile',
-  ],
-  // CRITICAL: serverClientId is required for Android to avoid ApiException: 10
-  // This is the OAuth 2.0 Web Client ID from Google Cloud Console
-  serverClientId: '1075135380266-qhr6qhoc5jiqo7uab2fqih22n71ovpdp.apps.googleusercontent.com',
-);
+/// Google Sign-In Service Provider
+final googleSignInServiceProvider = Provider((ref) => GoogleSignInService());
 
-/// Provider for GoogleSignInService
-final googleSignInServiceProvider = Provider((ref) => GoogleSignInService(ref));
-
-/// Service class to handle Google Sign-In operations
-/// Following the existing service pattern with Ref injection
-/// Based on official google_sign_in package documentation:
-/// https://pub.dev/packages/google_sign_in
+/// Service for handling Google Sign-In operations
+/// Following the existing service pattern in the project
 class GoogleSignInService {
-  final Ref ref;
+  // Google Sign-In instance configured for access token authentication
+  // OAuth client configured in google-services.json with SHA-1: BA:EF:A0:EB:C0:BD:5F:8C:66:8B:EB:8F:D1:1B:F3:35:BB:8B:7B:D9
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
 
-  GoogleSignInService(this.ref);
-
-  /// Initiates Google Sign-In flow
-  /// Returns GoogleSignInAccount if successful, null if user cancels or error occurs
-  Future<GoogleSignInAccount?> signInWithGoogle() async {
+  /// Sign in with Google
+  /// Uses signInSilently first to avoid UI flash, falls back to interactive
+  Future<GoogleSignInAccount?> signIn() async {
     try {
-      // Disconnect any previous account first (recommended by docs)
-      await _googleSignIn.signOut();
-
-      // Trigger the Google Sign-In flow
-      final GoogleSignInAccount? account = await _googleSignIn.signIn();
-
-      if (account == null) {
-        return null;
-      }
-
+      // Try silent sign-in first (no UI, faster, no black bar)
+      // Falls back to interactive sign-in if silent fails
+      GoogleSignInAccount? account = await _googleSignIn.signInSilently();
+      account ??= await _googleSignIn.signIn();
       return account;
     } catch (error) {
+      // Silent error handling - return null on failure
       return null;
     }
   }
 
-  /// Gets the access token from the Google account
-  /// Required to send to backend for authentication
+  /// Get Google access token from account
   /// Returns access token string if successful, null otherwise
-  Future<String?> getGoogleAccessToken(GoogleSignInAccount account) async {
+  Future<String?> getAccessToken(GoogleSignInAccount account) async {
     try {
-      final GoogleSignInAuthentication auth = await account.authentication;
+      final auth = await account.authentication;
       return auth.accessToken;
     } catch (error) {
       return null;
     }
   }
 
-  /// Signs out the user from Google
-  /// Call this when user logs out from the app
-  Future<void> signOutGoogle() async {
+  /// Sign out from Google
+  Future<void> signOut() async {
     try {
       await _googleSignIn.signOut();
     } catch (error) {
@@ -69,9 +48,8 @@ class GoogleSignInService {
     }
   }
 
-  /// Disconnects the user from Google (revokes access)
-  /// More complete than signOut - removes all permissions
-  Future<void> disconnectGoogle() async {
+  /// Disconnect Google account (revoke access)
+  Future<void> disconnect() async {
     try {
       await _googleSignIn.disconnect();
     } catch (error) {
@@ -79,8 +57,7 @@ class GoogleSignInService {
     }
   }
 
-  /// Checks if user is currently signed in with Google
-  /// Useful for checking auth state on app startup
+  /// Check if user is currently signed in
   Future<bool> isSignedIn() async {
     try {
       return await _googleSignIn.isSignedIn();
@@ -89,17 +66,6 @@ class GoogleSignInService {
     }
   }
 
-  /// Silently signs in if user was previously signed in
-  /// Useful for auto-login on app startup
-  Future<GoogleSignInAccount?> signInSilently() async {
-    try {
-      return await _googleSignIn.signInSilently();
-    } catch (error) {
-      return null;
-    }
-  }
-
-  /// Gets the current signed-in account
-  /// Returns null if no user is signed in
+  /// Get current signed-in user
   GoogleSignInAccount? get currentUser => _googleSignIn.currentUser;
 }

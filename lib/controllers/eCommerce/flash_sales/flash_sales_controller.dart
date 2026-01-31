@@ -74,7 +74,7 @@ class FlashSalesDetailsController extends StateNotifier<bool> {
       final responseData = response.data as Map<String, dynamic>;
       final data = responseData['data']?["products"];
       if (data != null && data is List) {
-        _products = (data as List<dynamic>)
+        _products = (data)
             .map((product) => Product.fromMap(product as Map<String, dynamic>))
             .toList();
       } else {

@@ -399,6 +399,27 @@
         "emojiU": "U+1F1E8 U+1F1E6"
     },
     {
+        "id": 37,
+        "name": "Cameroon",
+        "iso3": "CMR",
+        "iso2": "CM",
+        "numeric_code": "120",
+        "phone_code": "237",
+        "capital": "Yaounde",
+        "currency": "XAF",
+        "currency_name": "Central African CFA franc",
+        "currency_symbol": "FCFA",
+        "tld": ".cm",
+        "native": "Cameroon",
+        "region": "Africa",
+        "subregion": "Middle Africa",
+        "nationality": "Cameroonian",
+        "latitude": "6.00000000",
+        "longitude": "12.00000000",
+        "emoji": "🇨🇲",
+        "emojiU": "U+1F1E8 U+1F1F2"
+    },
+    {
         "id": 40,
         "name": "Cape Verde",
         "iso3": "CPV",

@@ -12,7 +12,6 @@ import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/common/country_controller.dart';
-import 'package:ready_ecommerce/controllers/eCommerce/address/address_controller.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/authentication/authentication_controller.dart';
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
 import 'package:ready_ecommerce/generated/l10n.dart';
@@ -500,18 +499,8 @@ class _SignUpLayoutState extends State<SignUpLayout> {
                         .googleSignIn()
                         .then((response) {
                       if (response.isSuccess) {
-                        // Load addresses and navigate to dashboard
-                        ref
-                            .read(addressControllerProvider.notifier)
-                            .getAddress();
-                        context.nav.pushNamedAndRemoveUntil(
-                          Routes.getCoreRouteName(AppConstants.appServiceName),
-                          (route) => false,
-                        );
-                        GlobalFunction.showCustomSnackbar(
-                          message: response.message,
-                          isSuccess: true,
-                        );
+                        // Navigate to dashboard after successful Google Sign-In
+                        _navigate(ref: ref);
                       } else {
                         // Show error via snackbar
                         GlobalFunction.showCustomSnackbar(

@@ -123,28 +123,28 @@ class AuthController extends StateNotifier<bool> {
     }
   }
 
-  /// Google Sign-In authentication method
-  /// Returns CommonResponse with user data if successful
+  /// Google Sign-In authentication
+  /// Returns CommonResponse with success status and message
   Future<CommonResponse> googleSignIn() async {
     try {
-      state = true; // Set loading state
+      state = true;
 
       // Step 1: Trigger Google Sign-In flow
       final googleAccount =
-          await ref.read(googleSignInServiceProvider).signInWithGoogle();
+          await ref.read(googleSignInServiceProvider).signIn();
 
       if (googleAccount == null) {
         state = false;
         return CommonResponse(
           isSuccess: false,
-          message: 'Google Sign-In was cancelled or failed',
+          message: 'Google Sign-In was cancelled',
         );
       }
 
       // Step 2: Get Google access token
       final accessToken = await ref
           .read(googleSignInServiceProvider)
-          .getGoogleAccessToken(googleAccount);
+          .getAccessToken(googleAccount);
 
       if (accessToken == null) {
         state = false;
@@ -154,19 +154,18 @@ class AuthController extends StateNotifier<bool> {
         );
       }
 
-      // Step 3: Send access token to backend
+      // Step 3: Send access token to backend (with FCM token automatically included)
       final response = await ref
           .read(authServiceProvider)
           .googleAuth(accessToken: accessToken);
 
       final String message = response.data['message'];
 
-      // Step 4: Check if response is successful
+      // Step 4: Save user data and token (same as manual login)
       if (response.statusCode == 200) {
         final userInfo = User.fromMap(response.data['data']['user']);
         final backendToken = response.data['data']['access']['token'];
 
-        // Step 5: Save user data and token (following login pattern)
         ref.read(hiveServiceProvider).saveUserInfo(userInfo: userInfo);
         ref
             .read(hiveServiceProvider)
@@ -174,20 +173,13 @@ class AuthController extends StateNotifier<bool> {
         ref.read(apiClientProvider).updateToken(token: backendToken);
 
         state = false;
-
-        // Step 6: Return user data for phone check
-        return CommonResponse(
-          isSuccess: true,
-          message: message,
-          data: userInfo, // Pass user object to check phone
-        );
+        return CommonResponse(isSuccess: true, message: message);
       }
 
       state = false;
       return CommonResponse(isSuccess: false, message: message);
     } catch (error) {
       state = false;
-      debugPrint(error.toString());
       return CommonResponse(isSuccess: false, message: error.toString());
     }
   }

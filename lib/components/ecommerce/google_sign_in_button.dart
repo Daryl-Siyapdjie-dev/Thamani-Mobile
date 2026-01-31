@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
 
-/// Google Sign-In button component
-/// Reusable outlined button with Google branding
+/// Google Sign-In Button Component
+/// Modern, clean design following project standards
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
@@ -45,18 +46,18 @@ class GoogleSignInButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Google "G" logo using icon
-                  Icon(
-                    Icons.g_mobiledata_rounded,
-                    color: colors(context).bodyTextColor,
-                    size: 28.sp,
+                  // Google logo with official colors
+                  SvgPicture.asset(
+                    'assets/svg/google_logo.svg',
+                    width: 24.w,
+                    height: 24.h,
                   ),
                   Gap(12.w),
                   Text(
                     'Sign in with Google',
                     style: AppTextStyle(context).buttonText.copyWith(
                           color: colors(context).bodyTextColor,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                   ),
                 ],

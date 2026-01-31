@@ -514,47 +514,68 @@ class AddToCartBottomSheet extends StatelessWidget {
             if (product.isDigital == false)
               Flexible(
                 flex: 1,
-                child: CustomTransparentButton(
-                  borderColor: colors(context).primaryColor,
-                  buttonTextColor: colors(context).primaryColor,
-                  onTap: () {
-                    if (!ref.read(hiveServiceProvider).userIsLoggedIn()) {
-                      _showTheWarningDialog();
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (_) => LoadingWrapperWidget(
-                          isLoading: ref.watch(cartController).isLoading,
-                          child: Container(),
-                        ),
-                      );
-                      _onTapCart(product, false, ref, context).then((value) {
-                        ref.read(hiveServiceProvider).getAuthToken().then(
-                              (token) => [
-                                if (token != null)
-                                  if (context.mounted)
-                                    {
-                                      Navigator.of(context)
-                                        ..pop()
-                                        ..pop()
-                                    }
-                              ],
-                            );
-                      });
-                    }
-                  },
-                  buttonText: S.of(ContextLess.context).addToCart,
+                child: AbsorbPointer(
+                  absorbing: product.quantity <= 0,
+                  child: CustomTransparentButton(
+                    borderColor: product.quantity <= 0
+                        ? ColorTween(
+                            begin: colors(context).primaryColor,
+                            end: colors(context).light,
+                          ).lerp(0.5)
+                        : colors(context).primaryColor,
+                    buttonTextColor: product.quantity <= 0
+                        ? ColorTween(
+                            begin: colors(context).primaryColor,
+                            end: colors(context).light,
+                          ).lerp(0.5)
+                        : colors(context).primaryColor,
+                    onTap: () {
+                      if (!ref.read(hiveServiceProvider).userIsLoggedIn()) {
+                        _showTheWarningDialog();
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (_) => LoadingWrapperWidget(
+                            isLoading: ref.watch(cartController).isLoading,
+                            child: Container(),
+                          ),
+                        );
+                        _onTapCart(product, false, ref, context).then((value) {
+                          ref.read(hiveServiceProvider).getAuthToken().then(
+                                (token) => [
+                                  if (token != null)
+                                    if (context.mounted)
+                                      {
+                                        Navigator.of(context)
+                                          ..pop()
+                                          ..pop()
+                                      }
+                                ],
+                              );
+                        });
+                      }
+                    },
+                    buttonText: S.of(ContextLess.context).addToCart,
+                  ),
                 ),
               ),
             Gap(16.w),
             Flexible(
               flex: 1,
-              child: CustomButton(
-                buttonText: S.of(ContextLess.context).buyNow,
-                buttonColor: colors(context).primaryColor,
-                onPressed: () {
-                  _onTapCart(product, true, ref, context);
-                },
+              child: AbsorbPointer(
+                absorbing: product.quantity <= 0,
+                child: CustomButton(
+                  buttonText: S.of(ContextLess.context).buyNow,
+                  buttonColor: product.quantity <= 0
+                      ? ColorTween(
+                          begin: colors(context).primaryColor,
+                          end: colors(context).light,
+                        ).lerp(0.5)
+                      : colors(context).primaryColor,
+                  onPressed: () {
+                    _onTapCart(product, true, ref, context);
+                  },
+                ),
               ),
             )
           ],

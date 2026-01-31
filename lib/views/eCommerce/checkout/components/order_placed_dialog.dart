@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_button.dart';
-import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
@@ -34,22 +33,11 @@ class OrderPlacedDialog extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 60.w,
-              height: 60.h,
-              padding: const EdgeInsets.all(14),
-              decoration: ShapeDecoration(
-                color: const Color(0xFF1EDD31),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.done,
-                  color: EcommerceAppColor.white,
-                ),
-              ),
+            Image.asset(
+              'assets/png/payment_succesfull.png',
+              width: 180.w,
+              height: 180.h,
+              fit: BoxFit.contain,
             ),
             SizedBox(height: 16.h),
             Text(

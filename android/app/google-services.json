@@ -12,7 +12,20 @@
           "package_name": "com.thamani.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "272805040726-lis68a7q49mucn9r6k4bueef2u9n20po.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thamani.app",
+            "certificate_hash": "baefa0ebc0bd5f8c668beb8fd11bf335bb8b7bd9"
+          }
+        },
+        {
+          "client_id": "272805040726-megd0ka0q0rtsj6cg5fht8u2fjjj9ofs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBDJG1MSSAQ1rHXez23vo-Uso7ppwBrM7c"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "272805040726-megd0ka0q0rtsj6cg5fht8u2fjjj9ofs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
