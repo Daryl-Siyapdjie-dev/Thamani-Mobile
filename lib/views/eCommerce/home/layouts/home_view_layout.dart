@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ready_ecommerce/components/ecommerce/app_logo.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
@@ -12,6 +13,7 @@ import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/category/category_controller.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/flash_sales/flash_sales_controller.dart';
+import 'package:ready_ecommerce/controllers/eCommerce/products_on_sale/products_on_sale_controller.dart';
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
 import 'package:ready_ecommerce/gen/assets.gen.dart';
 import 'package:ready_ecommerce/generated/l10n.dart';
@@ -169,6 +171,7 @@ class _EcommerceHomeViewLayoutState
                             Gap(10.h),
                             DealOfTheDayWidget(),
                             _buildScrollingContainers(),
+                            _buildProductsOnSaleWidget(context),
                             _buildPopularProductWidget(
                                 context, dashboardData.popularProducts),
                             if (ref
@@ -194,7 +197,7 @@ class _EcommerceHomeViewLayoutState
                   child: Text(error.toString(),
                       style: AppTextStyle(context).subTitle),
                 ),
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => _buildHomeSkeleton(context),
               ),
         ),
       ),
@@ -311,6 +314,43 @@ class _EcommerceHomeViewLayoutState
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildProductsOnSaleWidget(BuildContext context) {
+    ref.watch(productsOnSaleControllerProvider);
+    final products =
+        ref.read(productsOnSaleControllerProvider.notifier).products;
+    if (products.isEmpty) return const SizedBox.shrink();
+    return Container(
+      decoration: BoxDecoration(color: colors(context).accentColor),
+      child: Column(
+        children: [
+          _buildSectionHeader(
+            context,
+            S.of(context).productsOnSale,
+            Routes.getProductsViewRouteName(AppConstants.appServiceName),
+            arguments: [null, 'On Sale', 'on_sale', null, null, subCategories],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height / 2.8,
+            child: ListView.builder(
+              padding: EdgeInsets.only(left: 16.w),
+              scrollDirection: Axis.horizontal,
+              itemCount: products.length,
+              itemBuilder: (context, index) => PopularProductCard(
+                product: products[index],
+                onTap: () => context.nav.pushNamed(
+                  Routes.getProductDetailsRouteName(
+                      AppConstants.appServiceName),
+                  arguments: products[index].id,
+                ),
+              ),
+            ),
+          ),
+          Gap(20.h),
+        ],
+      ),
     );
   }
 
@@ -533,6 +573,130 @@ class _EcommerceHomeViewLayoutState
       print("Error parsing address data: $e");
       return '';
     }
+  }
+
+  Widget _buildHomeSkeleton(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Gap(20.h),
+            // Banner skeleton
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.w),
+              height: 160.h,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+            ),
+            Gap(20.h),
+            // Section header skeleton
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(height: 16.h, width: 100.w, color: Colors.white),
+                  Container(height: 14.h, width: 60.w, color: Colors.white),
+                ],
+              ),
+            ),
+            Gap(10.h),
+            // Categories row skeleton
+            SizedBox(
+              height: 90.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 6,
+                itemBuilder: (_, __) => Padding(
+                  padding: EdgeInsets.only(right: 16.w),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 56.w,
+                        height: 56.h,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Gap(6.h),
+                      Container(
+                          width: 48.w, height: 10.h, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Gap(10.h),
+            // Popular products section header
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(height: 16.h, width: 140.w, color: Colors.white),
+                  Container(height: 14.h, width: 60.w, color: Colors.white),
+                ],
+              ),
+            ),
+            Gap(8.h),
+            // Popular products horizontal skeleton
+            SizedBox(
+              height: MediaQuery.of(context).size.height / 2.8,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(left: 16.w),
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 4,
+                itemBuilder: (_, __) => Container(
+                  width: 220.w,
+                  margin: EdgeInsets.only(right: 10.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                ),
+              ),
+            ),
+            Gap(20.h),
+            // "Just For You" section header
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Container(height: 16.h, width: 110.w, color: Colors.white),
+            ),
+            Gap(8.h),
+            // Grid skeleton
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding:
+                  EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16.w,
+                mainAxisSpacing: 16.h,
+                childAspectRatio: 0.66,
+              ),
+              itemCount: 4,
+              itemBuilder: (_, __) => Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

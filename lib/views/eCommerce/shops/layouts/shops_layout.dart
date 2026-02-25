@@ -6,6 +6,7 @@ import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/shop/shop_controller.dart';
 import 'package:ready_ecommerce/models/eCommerce/shop/shop.dart';
 import 'package:ready_ecommerce/views/eCommerce/shops/components/shop_card.dart';
+import 'package:shimmer/shimmer.dart';
 
 class EcommerceShopsLayout extends ConsumerStatefulWidget {
   const EcommerceShopsLayout({super.key});
@@ -58,6 +59,47 @@ class _EcommerceShopsLayoutState extends ConsumerState<EcommerceShopsLayout> {
         );
   }
 
+  Widget _buildShopsSkeleton(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
+        itemCount: 8,
+        itemBuilder: (_, __) => Container(
+          margin: EdgeInsets.only(bottom: 12.h),
+          height: 80.h,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 64.w,
+                height: 64.h,
+                margin: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(height: 14.h, width: 140.w, color: Colors.white),
+                  SizedBox(height: 8.h),
+                  Container(height: 12.h, width: 100.w, color: Colors.white),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +114,7 @@ class _EcommerceShopsLayoutState extends ConsumerState<EcommerceShopsLayout> {
             final shops = ref.watch(shopControllerProvider.notifier).shops;
 
             if (shopProvider && !scrollLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return _buildShopsSkeleton(context);
             }
 
             return RefreshIndicator(

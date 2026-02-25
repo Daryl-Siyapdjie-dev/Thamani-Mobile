@@ -235,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "يرجى التحقق من حسابك",
     ),
     "popularProducts": MessageLookupByLibrary.simpleMessage("المنتجات الشعبية"),
+    "productsOnSale": MessageLookupByLibrary.simpleMessage("المنتجات المخفضة"),
     "postalCode": MessageLookupByLibrary.simpleMessage("رمز بريدي"),
     "priceHighToLow": MessageLookupByLibrary.simpleMessage(
       "السعر الاعلى الى الادنى",

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
@@ -104,12 +105,58 @@ class _MyOrderLayoutState extends ConsumerState<MyOrderLayout> {
     );
   }
 
+  Widget _buildOrdersSkeleton(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
+        itemCount: 6,
+        itemBuilder: (_, __) => Container(
+          margin: EdgeInsets.only(bottom: 12.h),
+          height: 110.h,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          padding: EdgeInsets.all(12.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(height: 12.h, width: 100.w, color: Colors.white),
+                  Container(height: 12.h, width: 60.w, color: Colors.white),
+                ],
+              ),
+              Container(height: 12.h, width: 140.w, color: Colors.white),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(height: 12.h, width: 80.w, color: Colors.white),
+                  Container(
+                    height: 26.h,
+                    width: 80.w,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildOrderListWidget() {
     return Expanded(
       child: ref.watch(orderControllerProvider)
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? _buildOrdersSkeleton(context)
           : AnimationLimiter(
               child: ref.watch(orderControllerProvider.notifier).orders.isEmpty
                   ? Center(

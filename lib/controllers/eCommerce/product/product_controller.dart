@@ -44,7 +44,10 @@ class ProductController extends StateNotifier<bool> {
           .getCategoryWiseProducts(productFilterModel: productFilterModel);
       _total = response.data['data']['total'];
       List<dynamic> productData = response.data['data']['products'];
-      _filter = Filters.fromMap(response.data['data']['filters']);
+      final filtersData = response.data['data']['filters'];
+      _filter = filtersData != null
+          ? Filters.fromMap(filtersData as Map<String, dynamic>)
+          : null;
       if (isPagination) {
         _products.addAll(
             productData.map((product) => Product.fromMap(product)).toList());

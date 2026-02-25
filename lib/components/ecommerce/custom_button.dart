@@ -36,12 +36,16 @@ class CustomButton extends StatelessWidget {
         ),
       ),
       onPressed: onPressed,
-      child: Text(
-        buttonText,
-        style: AppTextStyle(context).buttonText.copyWith(
-              color: buttonTextColor,
-            ),
-        textAlign: TextAlign.center,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          buttonText,
+          style: AppTextStyle(context).buttonText.copyWith(
+                color: buttonTextColor,
+              ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+        ),
       ),
     );
   }

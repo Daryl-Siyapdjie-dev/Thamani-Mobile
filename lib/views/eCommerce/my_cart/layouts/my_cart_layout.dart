@@ -510,7 +510,7 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Flexible(
             flex: 3,
@@ -565,7 +565,9 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
   }
 
   Widget _buildPromoTextField({required BuildContext context}) {
-    return Container(
+    return SizedBox(
+      height: 58.h,
+      child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
@@ -616,6 +618,7 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
         ),
         keyboardType: TextInputType.text,
         textInputAction: TextInputAction.done,
+      ),
       ),
     );
   }

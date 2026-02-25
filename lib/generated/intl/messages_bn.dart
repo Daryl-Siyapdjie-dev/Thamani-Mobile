@@ -266,6 +266,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "আপনার অ্যাকাউন্ট যাচাই করুন",
     ),
     "popularProducts": MessageLookupByLibrary.simpleMessage("জনপ্রিয় পণ্য"),
+    "productsOnSale": MessageLookupByLibrary.simpleMessage("বিক্রয়ে পণ্য"),
     "postalCode": MessageLookupByLibrary.simpleMessage("পোস্ট"),
     "priceHighToLow": MessageLookupByLibrary.simpleMessage(
       "মূল্য: উচ্চ থেকে কম",

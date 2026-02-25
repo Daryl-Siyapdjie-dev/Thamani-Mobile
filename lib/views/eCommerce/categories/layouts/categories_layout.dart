@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
+import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/category/category_controller.dart';
 import 'package:ready_ecommerce/routes.dart';
 import 'package:ready_ecommerce/utils/context_less_navigation.dart';
@@ -11,11 +12,50 @@ import 'package:ready_ecommerce/utils/global_function.dart';
 import 'package:ready_ecommerce/views/eCommerce/categories/components/sub_categories_bottom_sheet.dart';
 import 'package:ready_ecommerce/views/eCommerce/home/components/category_card.dart';
 import 'package:ready_ecommerce/views/eCommerce/products/layouts/product_details_layout.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:gap/gap.dart';
 
 class EcommerceCategoriesLayout extends ConsumerWidget {
   const EcommerceCategoriesLayout({
     super.key,
   });
+
+  Widget _buildCategoriesSkeleton(
+      BuildContext context, int columnCount, WidgetRef ref) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          mainAxisSpacing: 15.h,
+          crossAxisSpacing: 0.w,
+          childAspectRatio: columnCount <= 3 ? 0.80 : 0.85,
+          crossAxisCount: columnCount,
+        ),
+        itemCount: 12,
+        itemBuilder: (_, __) => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 56.w,
+              height: 56.h,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            Gap(8.h),
+            Container(
+              width: 60.w,
+              height: 12.h,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,8 +73,7 @@ class EcommerceCategoriesLayout extends ConsumerWidget {
       columnCount = 5; // Tablets
     }
 
-    bool isDark =
-        Theme.of(context).scaffoldBackgroundColor == EcommerceAppColor.black;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return LoadingWrapperWidget(
       isLoading: ref.watch(subCategoryControllerProvider),
       child: Scaffold(
@@ -43,7 +82,7 @@ class EcommerceCategoriesLayout extends ConsumerWidget {
           toolbarHeight: 80.h,
         ),
         backgroundColor:
-            isDark ? EcommerceAppColor.black : EcommerceAppColor.offWhite,
+            isDark ? const Color(0xFF121212) : EcommerceAppColor.offWhite,
         body: Consumer(
           builder: (context, ref, _) {
             final asyncValue = ref.watch(categoryControllerProvider);
@@ -115,9 +154,7 @@ class EcommerceCategoriesLayout extends ConsumerWidget {
                   error.toString(),
                 ),
               ),
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              loading: () => _buildCategoriesSkeleton(context, columnCount, ref),
             );
           },
         ),

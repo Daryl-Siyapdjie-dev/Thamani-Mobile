@@ -70,6 +70,7 @@ class AppConstants {
   static const String logout = '$baseUrl/logout';
   static const String flashSales = '$baseUrl/flash-sales';
   static const String flashSaleDetails = '$baseUrl/flash-sale';
+  static const String getProductsOnSale = '$baseUrl/products-on-sale';
   static const String allCountry = '$baseUrl/countries';
   static const String storeMessage = '$baseUrl/store-message';
   static const String getMessage = '$baseUrl/get-message';

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ready_ecommerce/components/ecommerce/app_logo.dart';
 import 'package:ready_ecommerce/components/ecommerce/confirmation_dialog.dart';
 import 'package:ready_ecommerce/components/ecommerce/custom_button.dart';
@@ -151,9 +152,7 @@ class _EcommerceProductDetailsLayoutState
                         error.toString(),
                       ),
                     )),
-                loading: () => const Center(
-                  child: CircularProgressIndicator(),
-                ),
+                loading: () => _buildProductDetailsSkeleton(context),
               ),
         ),
       ),
@@ -276,6 +275,129 @@ class _EcommerceProductDetailsLayoutState
           GlobalFunction.navigatorKey.currentContext!.nav
               .pushNamedAndRemoveUntil(Routes.login, (route) => false);
         },
+      ),
+    );
+  }
+
+  Widget _buildProductDetailsSkeleton(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image carousel placeholder
+            Container(
+              height: 280.h,
+              width: double.infinity,
+              color: Colors.white,
+            ),
+            Gap(14.h),
+            // Product name and price
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(height: 22.h, width: 240.w, color: Colors.white),
+                  Gap(8.h),
+                  Container(height: 18.h, width: 120.w, color: Colors.white),
+                  Gap(12.h),
+                  Row(
+                    children: [
+                      Container(
+                          height: 14.h, width: 80.w, color: Colors.white),
+                      Gap(12.w),
+                      Container(
+                          height: 14.h, width: 60.w, color: Colors.white),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Gap(20.h),
+            // Color picker skeleton
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                children: List.generate(
+                  5,
+                  (i) => Container(
+                    margin: EdgeInsets.only(right: 8.w),
+                    width: 32.w,
+                    height: 32.h,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Gap(16.h),
+            // Size picker skeleton
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Row(
+                children: List.generate(
+                  4,
+                  (i) => Container(
+                    margin: EdgeInsets.only(right: 8.w),
+                    width: 48.w,
+                    height: 32.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Gap(20.h),
+            // Description skeleton
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(height: 14.h, width: double.infinity, color: Colors.white),
+                  Gap(8.h),
+                  Container(height: 14.h, width: double.infinity, color: Colors.white),
+                  Gap(8.h),
+                  Container(height: 14.h, width: 200.w, color: Colors.white),
+                ],
+              ),
+            ),
+            Gap(20.h),
+            // Similar products section title
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Container(height: 16.h, width: 160.w, color: Colors.white),
+            ),
+            Gap(12.h),
+            // Similar products horizontal skeleton
+            SizedBox(
+              height: 180.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.only(left: 16.w),
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 4,
+                itemBuilder: (_, __) => Container(
+                  width: 140.w,
+                  margin: EdgeInsets.only(right: 10.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                ),
+              ),
+            ),
+            Gap(20.h),
+          ],
+        ),
       ),
     );
   }

@@ -119,8 +119,8 @@ List<BottomItem> getBottomItems({required BuildContext context}) {
       name: S.of(context).home,
     ),
     BottomItem(
-      icon: Assets.svg.inactiveBag,
-      activeIcon: Assets.svg.activeBag,
+      icon: Assets.svg.cart,
+      activeIcon: Assets.svg.cart,
       name: S.of(context).myCart,
     ),
     BottomItem(

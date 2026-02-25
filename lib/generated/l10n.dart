@@ -104,6 +104,16 @@ class S {
     );
   }
 
+  /// `Products on Sale`
+  String get productsOnSale {
+    return Intl.message(
+      'Products on Sale',
+      name: 'productsOnSale',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Just For You`
   String get justForYou {
     return Intl.message('Just For You', name: 'justForYou', desc: '', args: []);

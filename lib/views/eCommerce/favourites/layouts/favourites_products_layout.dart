@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
@@ -50,12 +51,29 @@ class _FavouritesProductsLayoutState
     );
   }
 
+  Widget _buildFavoritesSkeleton(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
+        itemCount: 6,
+        itemBuilder: (_, __) => Container(
+          margin: EdgeInsets.only(bottom: 12.h),
+          height: 100.h,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildListProductsWidget({required BuildContext context}) {
     return AnimationLimiter(
       child: ref.watch(productControllerProvider)
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? _buildFavoritesSkeleton(context)
           : ref
                   .watch(productControllerProvider.notifier)
                   .favoriteProducts

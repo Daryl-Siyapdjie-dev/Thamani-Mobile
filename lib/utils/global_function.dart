@@ -128,8 +128,8 @@ class GlobalFunction {
   }
 
   static Color getBackgroundColor({required BuildContext context}) {
-    return Theme.of(context).scaffoldBackgroundColor == EcommerceAppColor.black
-        ? EcommerceAppColor.black
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFF121212)
         : EcommerceAppColor.white;
   }
 
@@ -137,7 +137,7 @@ class GlobalFunction {
     bool isDark = Hive.box(AppConstants.appSettingsBox)
         .get(AppConstants.isDarkTheme, defaultValue: false);
 
-    return isDark ? EcommerceAppColor.black : EcommerceAppColor.white;
+    return isDark ? const Color(0xFF121212) : EcommerceAppColor.white;
   }
 
   static Widget getStatusWidget(
@@ -220,8 +220,13 @@ class GlobalFunction {
   }) {
     var currecy = ref.watch(currencyProvider);
 
-    final String actualPrice =
+    String actualPrice =
         (double.parse(price) * currecy.rate).toStringAsFixed(2);
+    if (actualPrice.contains('.')) {
+      actualPrice = actualPrice
+          .replaceAll(RegExp(r'0+$'), '')
+          .replaceAll(RegExp(r'\.$'), '');
+    }
     if (currecy.position.trim() == 'prefix') {
       return '${currecy.symbol}$actualPrice';
     } else {

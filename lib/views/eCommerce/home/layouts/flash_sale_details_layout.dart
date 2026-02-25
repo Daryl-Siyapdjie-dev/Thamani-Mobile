@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ready_ecommerce/config/app_constants.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
+import 'package:ready_ecommerce/config/theme.dart';
 import 'package:ready_ecommerce/controllers/eCommerce/flash_sales/flash_sales_controller.dart';
 import 'package:ready_ecommerce/routes.dart';
 import 'package:ready_ecommerce/utils/context_less_navigation.dart';
 import 'package:ready_ecommerce/views/eCommerce/home/components/product_card.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FlashSaleDetailsLayout extends ConsumerStatefulWidget {
   String title;
@@ -23,6 +25,29 @@ class _FlashSaleDetailsLayoutState
     return screenWidth > 600 ? 3 : 2;
   }
 
+  Widget _buildSkeletonGrid(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withValues(alpha: 0.5),
+      child: GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _calculateCrossAxisCount(context),
+          crossAxisSpacing: 16.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.66,
+        ),
+        itemCount: 6,
+        itemBuilder: (_, __) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +55,7 @@ class _FlashSaleDetailsLayoutState
         title: Text(widget.title, style: AppTextStyle(context).appBarText),
       ),
       body: ref.watch(flashSaleDetailsControllerProvider)
-          ? Center(child: CircularProgressIndicator())
+          ? _buildSkeletonGrid(context)
           : ref
                   .watch(flashSaleDetailsControllerProvider.notifier)
                   .products

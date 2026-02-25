@@ -69,7 +69,7 @@ class ProductCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(5.r),
             child: CachedNetworkImage(
               imageUrl: product.thumbnail,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
             ),
           ),
         ),
@@ -80,14 +80,23 @@ class ProductCard extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5.r),
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withOpacity(0.65),
               ),
               child: Center(
-                child: Text(
-                  'Out of Stock',
-                  style: AppTextStyle(context).subTitle.copyWith(
-                        color: colors(context).light,
-                      ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
+                  ),
+                  child: Text(
+                    'Out of Stock',
+                    style: AppTextStyle(context).subTitle.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
                 ),
               ),
             ),

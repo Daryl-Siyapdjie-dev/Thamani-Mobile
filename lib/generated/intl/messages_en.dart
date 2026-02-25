@@ -260,6 +260,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please verify your account",
     ),
     "popularProducts": MessageLookupByLibrary.simpleMessage("Popular Products"),
+    "productsOnSale": MessageLookupByLibrary.simpleMessage("Products on Sale"),
     "postalCode": MessageLookupByLibrary.simpleMessage("Postal Code"),
     "priceHighToLow": MessageLookupByLibrary.simpleMessage("Price:High To Low"),
     "priceLowToHigh": MessageLookupByLibrary.simpleMessage(

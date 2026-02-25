@@ -302,6 +302,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "popularProducts": MessageLookupByLibrary.simpleMessage(
       "Produits Populaires",
     ),
+    "productsOnSale": MessageLookupByLibrary.simpleMessage(
+      "Produits en promotion",
+    ),
     "postalCode": MessageLookupByLibrary.simpleMessage("Code Postal"),
     "priceHighToLow": MessageLookupByLibrary.simpleMessage(
       "Prix : Du Plus Élevé au Plus Bas",

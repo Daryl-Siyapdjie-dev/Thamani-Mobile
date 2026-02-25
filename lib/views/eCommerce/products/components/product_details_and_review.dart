@@ -195,11 +195,25 @@ class ProductDetailsAndReviewState
   }
 
   Widget _buildHtmlContentView() {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Html(data: widget.productDetails.product.description),
+        child: Html(
+          data: widget.productDetails.product.description,
+          style: {
+            'body': Style(
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+            'p': Style(
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+            '*': Style(
+              color: isDark ? Colors.white.withOpacity(0.87) : Colors.black87,
+            ),
+          },
+        ),
       ),
     );
   }

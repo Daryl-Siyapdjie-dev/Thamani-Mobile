@@ -11,8 +11,11 @@ class ProductService implements ProductProviderBase {
   @override
   Future<Response> getCategoryWiseProducts(
       {required ProductFilterModel productFilterModel}) async {
+    final url = productFilterModel.sortType == 'on_sale'
+        ? AppConstants.getProductsOnSale
+        : AppConstants.getProducts;
     final response = await ref.read(apiClientProvider).get(
-          AppConstants.getProducts,
+          url,
           query: productFilterModel.toMap(),
         );
     return response;

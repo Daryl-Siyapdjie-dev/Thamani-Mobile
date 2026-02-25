@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:ready_ecommerce/components/ecommerce/confirmation_dialog.dart';
-import 'package:ready_ecommerce/components/ecommerce/custom_button.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
@@ -90,30 +89,38 @@ class _EcommerceCheckoutLayoutState
           ref.watch(profileInfoControllerProvider).whenOrNull(data: (user) {
         return _buildBottomNavigationBar(isProfileVerify: user.accountVerified);
       }),
-      body: Container(
-        margin: EdgeInsets.only(top: 10.h),
-        color: GlobalFunction.getContainerColor(),
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(
-          horizontal: 20.w,
-          vertical: 8.h,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildAddressWidget(),
-              Gap(20.h),
-              _buildAdditionalInfoTextField(),
-              Gap(20.h),
-              _buildToBePaidWidget(),
-              if (selectedPaymentType == PaymentType.online) ...[
-                _buildPaymentMethodsWidget()
-                // const CircularProgressIndicator(),
-              ]
-            ],
+      body: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 10.h),
+            color: GlobalFunction.getContainerColor(),
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+              vertical: 8.h,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildAddressWidget(),
+                  Gap(20.h),
+                  _buildAdditionalInfoTextField(),
+                  Gap(20.h),
+                  _buildToBePaidWidget(),
+                  if (selectedPaymentType == PaymentType.online) ...[
+                    _buildPaymentMethodsWidget()
+                  ]
+                ],
+              ),
+            ),
           ),
-        ),
+          if (ref.watch(orderControllerProvider))
+            Container(
+              color: Colors.black.withOpacity(0.4),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
       ),
     );
   }
@@ -293,10 +300,27 @@ class _EcommerceCheckoutLayoutState
                   type: S.of(context).cashOnDelivery,
                   image: Assets.png.cash.image(),
                   onTap: () {
-                    if (selectedPaymentType != PaymentType.cash) {
-                      setState(() {
-                        selectedPaymentType = PaymentType.cash;
-                      });
+                    setState(() {
+                      selectedPaymentType = PaymentType.cash;
+                    });
+                    if (_runValidations()) {
+                      showDialog(
+                        context: context,
+                        barrierColor:
+                            colors(context).accentColor!.withValues(alpha: 0.8),
+                        builder: (context) => ConfirmationDialog(
+                          title: S.of(context).pyment,
+                          des: S.of(context).cashPaymentDes,
+                          confirmButtonText: S.of(context).yes,
+                          cancelButtonText: S.of(context).no,
+                          confirmationButtonColor:
+                              colors(context).primaryColor,
+                          onPressed: () {
+                            context.nav.pop();
+                            _placeOrder();
+                          },
+                        ),
+                      );
                     }
                   },
                 ),
@@ -325,186 +349,110 @@ class _EcommerceCheckoutLayoutState
     );
   }
 
-  Widget _buildBottomNavigationBar({bool? isProfileVerify}) {
+  Widget? _buildBottomNavigationBar({bool? isProfileVerify}) {
     final masterData = ref.watch(masterControllerProvider.notifier).materModel;
     final orderPlaceAccountVerify = masterData.data.orderPlaceAccountVerify;
     final registerOtpType = masterData.data.registerOtpType;
-    debugPrint('registerOtpType: $registerOtpType');
-    debugPrint('orderPlaceAccountVerify: $orderPlaceAccountVerify');
+
+    if (!(orderPlaceAccountVerify == true && isProfileVerify == false)) {
+      return null;
+    }
+
     return Container(
-      height: orderPlaceAccountVerify == true && isProfileVerify == false
-          ? 110.h
-          : 76.h,
+      height: 70.h,
       color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-      child: Column(
-        children: [
-          orderPlaceAccountVerify == true && isProfileVerify == false
-              ? Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                      side: BorderSide(
-                        width: 1.5,
-                        color: colors(context).accentColor!,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Shimmer(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.deepPurple,
-                            Colors.yellow,
-                            Colors.red,
-                          ],
-                          stops: [0.2, 0.5, 0.8],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        child: Text(
-                          S.of(context).pleaseVerifyYourAccount,
-                          style: AppTextStyle(context).title.copyWith(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(hiveServiceProvider)
-                              .getUserInfo()
-                              .then((userInfo) {
-                            if (!mounted) return;
-                            if (userInfo != null) {
-                              if (registerOtpType == 'email') {
-                                if (userInfo.email == null) {
-                                  GlobalFunction.showCustomSnackbar(
-                                      message:
-                                          "Please update your profile with email to verify your account",
-                                      isSuccess: false);
-                                } else {
-                                  if (mounted) {
-                                    context.nav.pushNamed(
-                                      Routes.confirmOTP,
-                                      arguments: ConfirmOTPScreenArguments(
-                                          phoneNumber: userInfo.email!,
-                                          isPasswordRecover: false,
-                                          isFromCheckoutScreen: true),
-                                    );
-                                  }
-                                }
-                              } else if (registerOtpType == 'phone') {
-                                if (userInfo.email == null) {
-                                  GlobalFunction.showCustomSnackbar(
-                                      message:
-                                          "Please update your profile with phone number to verify your account",
-                                      isSuccess: false);
-                                } else {
-                                  if (mounted) {
-                                    context.nav.pushNamed(
-                                      Routes.confirmOTP,
-                                      arguments: ConfirmOTPScreenArguments(
-                                          phoneNumber: userInfo.phone!,
-                                          isPasswordRecover: false,
-                                          isFromCheckoutScreen: true),
-                                    );
-                                  }
-                                }
-                              }
-                            }
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.w,
-                            vertical: 2.h,
-                          ),
-                          decoration: ShapeDecoration(
-                            color:
-                                colors(context).primaryColor!.withOpacity(0.1),
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                width: 1,
-                                color: colors(context).primaryColor!,
-                              ),
-                              borderRadius: BorderRadius.circular(4.r),
-                            ),
-                          ),
-                          child: Text(
-                            S.of(context).verifyNow,
-                            style: AppTextStyle(context).bodyTextSmall.copyWith(
-                                  color: colors(context).primaryColor,
-                                ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : SizedBox.shrink(),
-          Gap(8.h),
-          ref.watch(orderControllerProvider)
-              ? const Center(child: CircularProgressIndicator())
-              : AbsorbPointer(
-                  absorbing: selectedPaymentType == PaymentType.none,
-                  child: CustomButton(
-                    buttonColor: selectedPaymentType == PaymentType.none
-                        ? ColorTween(
-                            begin: colors(context).primaryColor,
-                            end: colors(context).light,
-                          ).lerp(0.5)
-                        : colors(context).primaryColor,
-                    buttonText: S.of(context).placeOrder,
-                    onPressed: () {
-                      if (isProfileVerify == false &&
-                          orderPlaceAccountVerify == true) {
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+        decoration: ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+            side: BorderSide(
+              width: 1.5,
+              color: colors(context).accentColor!,
+            ),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Shimmer(
+              gradient: const LinearGradient(
+                colors: [Colors.deepPurple, Colors.yellow, Colors.red],
+                stops: [0.2, 0.5, 0.8],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              child: Text(
+                S.of(context).pleaseVerifyYourAccount,
+                style: AppTextStyle(context)
+                    .title
+                    .copyWith(fontSize: 14.sp, fontWeight: FontWeight.bold),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                ref.read(hiveServiceProvider).getUserInfo().then((userInfo) {
+                  if (!mounted) return;
+                  if (userInfo != null) {
+                    if (registerOtpType == 'email') {
+                      if (userInfo.email == null) {
                         GlobalFunction.showCustomSnackbar(
-                          message: 'Please verify your account first!',
-                          isSuccess: false,
-                        );
-                      } else if (ref.watch(selectedDeliveryAddress) == null) {
-                        GlobalFunction.showCustomSnackbar(
-                          message: 'Please add your delivery address!',
-                          isSuccess: false,
-                        );
-                      } else if (selectedPaymentType == PaymentType.online &&
-                          ref.read(selectedPayment) == '') {
-                        GlobalFunction.showCustomSnackbar(
-                          message: 'Please select your payment method!',
-                          isSuccess: false,
-                        );
+                            message:
+                                "Please update your profile with email to verify your account",
+                            isSuccess: false);
                       } else {
-                        if (selectedPaymentType == PaymentType.cash) {
-                          showDialog(
-                              context: context,
-                              barrierColor:
-                                  colors(context).accentColor!.withOpacity(0.8),
-                              builder: (context) => ConfirmationDialog(
-                                    title: S.of(context).pyment,
-                                    des: S.of(context).cashPaymentDes,
-                                    confirmButtonText: S.of(context).yes,
-                                    cancelButtonText: S.of(context).no,
-                                    confirmationButtonColor:
-                                        colors(context).primaryColor,
-                                    onPressed: () {
-                                      context.nav.pop();
-                                      _placeOrder();
-                                    },
-                                  ));
-                        } else {
-                          _placeOrder();
+                        if (mounted) {
+                          context.nav.pushNamed(
+                            Routes.confirmOTP,
+                            arguments: ConfirmOTPScreenArguments(
+                                phoneNumber: userInfo.email!,
+                                isPasswordRecover: false,
+                                isFromCheckoutScreen: true),
+                          );
                         }
                       }
-                    },
+                    } else if (registerOtpType == 'phone') {
+                      if (userInfo.phone == null) {
+                        GlobalFunction.showCustomSnackbar(
+                            message:
+                                "Please update your profile with phone number to verify your account",
+                            isSuccess: false);
+                      } else {
+                        if (mounted) {
+                          context.nav.pushNamed(
+                            Routes.confirmOTP,
+                            arguments: ConfirmOTPScreenArguments(
+                                phoneNumber: userInfo.phone!,
+                                isPasswordRecover: false,
+                                isFromCheckoutScreen: true),
+                          );
+                        }
+                      }
+                    }
+                  }
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                decoration: ShapeDecoration(
+                  color: colors(context).primaryColor!.withValues(alpha: 0.1),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                        width: 1, color: colors(context).primaryColor!),
+                    borderRadius: BorderRadius.circular(4.r),
                   ),
                 ),
-        ],
+                child: Text(
+                  S.of(context).verifyNow,
+                  style: AppTextStyle(context).bodyTextSmall.copyWith(
+                        color: colors(context).primaryColor,
+                      ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -531,7 +479,11 @@ class _EcommerceCheckoutLayoutState
             padding: EdgeInsets.only(bottom: 10.h),
             child: PaymentCard(
               onTap: () {
+                if (ref.read(orderControllerProvider)) return;
                 ref.read(selectedPayment.notifier).state = paymentMethod.name;
+                if (_runValidations()) {
+                  _placeOrder();
+                }
               },
               isActive: ref.watch(selectedPayment) == paymentMethod.name,
               paymentGateways: paymentMethod,
@@ -540,6 +492,29 @@ class _EcommerceCheckoutLayoutState
         },
       ),
     );
+  }
+
+  bool _runValidations() {
+    final masterData = ref.read(masterControllerProvider.notifier).materModel;
+    final orderPlaceAccountVerify = masterData.data.orderPlaceAccountVerify;
+    final isProfileVerify =
+        ref.read(profileInfoControllerProvider).value?.accountVerified;
+
+    if (isProfileVerify == false && orderPlaceAccountVerify == true) {
+      GlobalFunction.showCustomSnackbar(
+        message: 'Please verify your account first!',
+        isSuccess: false,
+      );
+      return false;
+    }
+    if (ref.read(selectedDeliveryAddress) == null) {
+      GlobalFunction.showCustomSnackbar(
+        message: 'Please add your delivery address!',
+        isSuccess: false,
+      );
+      return false;
+    }
+    return true;
   }
 
   void _placeOrder() {

@@ -12,7 +12,7 @@ ThemeData getAppTheme(
       AppColors(
         primaryColor: appColor.primaryColor,
         accentColor:
-            isDarkTheme ? const Color(0xFF1e2420) : appColor.accentColor,
+            isDarkTheme ? const Color(0xFF2D2D2D) : appColor.accentColor,
         secondaryColor: appColor.secondaryColor,
         buttonColor: appColor.buttonColor,
         bodyTextColor: isDarkTheme ? appColor.light : appColor.dark,
@@ -27,10 +27,12 @@ ThemeData getAppTheme(
     ],
     fontFamily: 'Mulish',
     unselectedWidgetColor: appColor.accentColor,
-    scaffoldBackgroundColor: isDarkTheme ? appColor.dark : appColor.light,
+    scaffoldBackgroundColor:
+        isDarkTheme ? const Color(0xFF121212) : appColor.light,
     appBarTheme: AppBarTheme(
       // toolbarHeight: 80.h,
-      backgroundColor: isDarkTheme ? appColor.dark : appColor.light,
+      backgroundColor:
+          isDarkTheme ? const Color(0xFF121212) : appColor.light,
       titleTextStyle: TextStyle(
         color: isDarkTheme ? appColor.light : appColor.dark,
         fontSize: 18.sp,
@@ -50,19 +52,19 @@ ThemeData getAppTheme(
       onSecondary: appColor.secondaryColor,
       error: appColor.errorColor,
       onError: appColor.errorColor,
-      surface: isDarkTheme ? appColor.dark : appColor.light,
+      surface: isDarkTheme ? const Color(0xFF121212) : appColor.light,
       onSurface: isDarkTheme ? appColor.light : appColor.dark,
     ),
     bottomSheetTheme: BottomSheetThemeData(
       modalBarrierColor: isDarkTheme
-          ? const Color(0xFF1e2420).withOpacity(0.8)
+          ? const Color(0xFF2D2D2D).withOpacity(0.8)
           : appColor.accentColor.withOpacity(0.8),
       backgroundColor:
-          isDarkTheme ? EcommerceAppColor.black : EcommerceAppColor.white,
+          isDarkTheme ? const Color(0xFF1E1E1E) : EcommerceAppColor.white,
       modalBackgroundColor:
-          isDarkTheme ? EcommerceAppColor.black : EcommerceAppColor.white,
+          isDarkTheme ? const Color(0xFF1E1E1E) : EcommerceAppColor.white,
       surfaceTintColor:
-          isDarkTheme ? EcommerceAppColor.black : EcommerceAppColor.white,
+          isDarkTheme ? const Color(0xFF1E1E1E) : EcommerceAppColor.white,
     ),
   );
 }

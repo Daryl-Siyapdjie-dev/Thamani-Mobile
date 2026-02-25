@@ -22,6 +22,7 @@ import 'package:ready_ecommerce/utils/global_function.dart';
 import 'package:ready_ecommerce/views/eCommerce/home/components/product_card.dart';
 import 'package:ready_ecommerce/views/eCommerce/products/components/filter_modal_bottom_sheet.dart';
 import 'package:ready_ecommerce/views/eCommerce/products/components/list_product_card.dart';
+import 'package:shimmer/shimmer.dart';
 
 final isListProvider = StateProvider<bool>((ref) => true);
 
@@ -370,11 +371,12 @@ class _EcommerceProductsLayoutState
   }
 
   Widget _buildProductsWidget(BuildContext context) {
+    final isLoading = ref.watch(productControllerProvider);
     final productController = ref.watch(productControllerProvider.notifier);
     final products = productController.products;
 
-    if (ref.watch(productControllerProvider)) {
-      return Center(child: CircularProgressIndicator());
+    if (isLoading && products.isEmpty) {
+      return _buildSkeletonGrid(context);
     }
 
     if (products.isEmpty) {
@@ -386,8 +388,34 @@ class _EcommerceProductsLayoutState
         : _buildGridProductsWidget(context);
   }
 
+  Widget _buildSkeletonGrid(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: colors(context).accentColor!,
+      highlightColor: colors(context).accentColor!.withOpacity(0.5),
+      child: GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16.w,
+          mainAxisSpacing: 16.h,
+          childAspectRatio: 0.66,
+        ),
+        itemCount: 6,
+        itemBuilder: (_, __) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildListProductsWidget(BuildContext context) {
+    final isLoading = ref.watch(productControllerProvider);
     final products = ref.watch(productControllerProvider.notifier).products;
+    final hasMore = products.length <
+        (ref.watch(productControllerProvider.notifier).total ?? 0);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 500),
@@ -397,8 +425,16 @@ class _EcommerceProductsLayoutState
           // physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           padding: EdgeInsets.symmetric(vertical: 10.h),
-          itemCount: products.length,
+          itemCount: products.length + (isLoading && hasMore ? 1 : 0),
           itemBuilder: (context, index) {
+            if (index == products.length) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.h),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
             if (isLastPosition && scrollController.hasClients) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 scrollController.jumpTo(scrollPossition);
@@ -432,7 +468,10 @@ class _EcommerceProductsLayoutState
   }
 
   Widget _buildGridProductsWidget(BuildContext context) {
+    final isLoading = ref.watch(productControllerProvider);
     final products = ref.watch(productControllerProvider.notifier).products;
+    final hasMore = products.length <
+        (ref.watch(productControllerProvider.notifier).total ?? 0);
 
     return AnimationLimiter(
       child: GridView.builder(
@@ -446,8 +485,11 @@ class _EcommerceProductsLayoutState
           mainAxisSpacing: 16.h,
           childAspectRatio: 0.66,
         ),
-        itemCount: products.length,
+        itemCount: products.length + (isLoading && hasMore ? 1 : 0),
         itemBuilder: (context, index) {
+          if (index == products.length) {
+            return Center(child: CircularProgressIndicator());
+          }
           if (isLastPosition && scrollController.hasClients) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               scrollController.jumpTo(scrollPossition);

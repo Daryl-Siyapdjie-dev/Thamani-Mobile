@@ -128,22 +128,16 @@ class AppBottomNavbar extends ConsumerWidget {
               ]
             ],
           ),
-          if (isSelected)
-            TweenAnimationBuilder<double>(
-              tween: Tween<double>(begin: -5, end: 1),
-              duration: const Duration(milliseconds: 300),
-              builder: (context, value, child) {
-                return Text(
-                  bottomItem.name,
-                  style: AppTextStyle(context).bodyTextSmall.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: isSelected
-                            ? colors(context).primaryColor
-                            : colors(context).bodyTextSmallColor,
-                      ),
-                );
-              },
-            )
+          Text(
+            bottomItem.name,
+            style: AppTextStyle(context).bodyTextSmall.copyWith(
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  fontSize: 10,
+                  color: isSelected
+                      ? colors(context).primaryColor
+                      : colors(context).bodyTextSmallColor,
+                ),
+          )
         ],
       ),
     );

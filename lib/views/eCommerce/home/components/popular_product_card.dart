@@ -32,33 +32,45 @@ class PopularProductCard extends ConsumerWidget {
           onTap: onTap,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 5.w),
-            padding: EdgeInsets.symmetric(
-              horizontal: 12.w,
-            ).copyWith(top: 12.h),
             width: 220.w,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0.r),
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  flex: 6,
-                  fit: FlexFit.tight,
+                SizedBox(
+                  height: 130.h,
                   child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      SizedBox(
-                        width: double.infinity,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5.r),
-                          child: CachedNetworkImage(
-                            imageUrl: product.thumbnail,
-                            fit: BoxFit.contain,
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8.0.r),
+                          topRight: Radius.circular(8.0.r),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: product.thumbnail,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: colors(context).accentColor,
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: colors(context).accentColor,
+                            child: Center(
+                              child: Icon(
+                                Icons.image_not_supported_outlined,
+                                color: colors(context).bodyTextSmallColor,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       if (product.discountPercentage != 0)
                         Positioned(
+                          top: 0,
+                          left: 0,
                           child: Container(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 2.w, vertical: 1.h),
@@ -82,14 +94,23 @@ class PopularProductCard extends ConsumerWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5.r),
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withOpacity(0.65),
                             ),
                             child: Center(
-                              child: Text(
-                                'Out of Stock',
-                                style: AppTextStyle(context).subTitle.copyWith(
-                                      color: colors(context).light,
-                                    ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: Colors.white.withOpacity(0.5), width: 1),
+                                ),
+                                child: Text(
+                                  'Out of Stock',
+                                  style: AppTextStyle(context).subTitle.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
                               ),
                             ),
                           ),
@@ -98,10 +119,10 @@ class PopularProductCard extends ConsumerWidget {
                     ],
                   ),
                 ),
-                Flexible(
-                  flex: 5,
-                  fit: FlexFit.tight,
-                  child: Column(
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -236,6 +257,7 @@ class PopularProductCard extends ConsumerWidget {
                       ),
                       Gap(product.discountPrice > 0 ? 10.h : 12),
                     ],
+                  ),
                   ),
                 ),
               ],
