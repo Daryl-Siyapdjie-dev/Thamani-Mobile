@@ -193,7 +193,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "home": MessageLookupByLibrary.simpleMessage("Accueil"),
     "hours": MessageLookupByLibrary.simpleMessage("Heures"),
     "isRequired": MessageLookupByLibrary.simpleMessage("est requis !"),
-    "justForYou": MessageLookupByLibrary.simpleMessage("Juste Pour Vous"),
+    "justForYou": MessageLookupByLibrary.simpleMessage("Conçus pour vous"),
     "language": MessageLookupByLibrary.simpleMessage("Langue"),
     "location": MessageLookupByLibrary.simpleMessage("Emplacement"),
     "login": MessageLookupByLibrary.simpleMessage("Se Connecter"),

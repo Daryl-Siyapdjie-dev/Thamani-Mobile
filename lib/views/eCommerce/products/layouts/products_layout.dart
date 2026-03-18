@@ -141,43 +141,41 @@ class _EcommerceProductsLayoutState
     debugPrint("isList ${ref.watch(isListProvider)}");
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: GlobalFunction.getContainerColor()));
-    return SafeArea(
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(0),
-          child: AppBar(
-            elevation: 0,
-            automaticallyImplyLeading: false,
-          ),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          elevation: 0,
+          automaticallyImplyLeading: false,
         ),
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor ==
-                const Color.fromARGB(255, 1, 1, 2)
-            ? colors(context).dark
-            : colors(context).accentColor,
-        body: NestedScrollView(
-          floatHeaderSlivers: false,
-          physics: NeverScrollableScrollPhysics(),
-          headerSliverBuilder: (context, value) {
-            return [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    _customHeaderAppBarWidget(),
-                  ],
-                ),
+      ),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor ==
+              const Color.fromARGB(255, 1, 1, 2)
+          ? colors(context).dark
+          : colors(context).accentColor,
+      body: NestedScrollView(
+        floatHeaderSlivers: false,
+        physics: NeverScrollableScrollPhysics(),
+        headerSliverBuilder: (context, value) {
+          return [
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  _customHeaderAppBarWidget(),
+                ],
               ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverAppBarDelegate(
-                  maxExtentS: widget.subCategories!.isNotEmpty ? 110.h : 60.h,
-                  child: _buildFilterRow(context),
-                ),
-              )
-            ];
-          },
-          body: _buildProductsWidget(context),
-        ),
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                maxExtentS: widget.subCategories!.isNotEmpty ? 110.h : 60.h,
+                child: _buildFilterRow(context),
+              ),
+            )
+          ];
+        },
+        body: _buildProductsWidget(context),
       ),
     );
   }
@@ -393,7 +391,8 @@ class _EcommerceProductsLayoutState
       baseColor: colors(context).accentColor!,
       highlightColor: colors(context).accentColor!.withOpacity(0.5),
       child: GridView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h)
+            .copyWith(bottom: 80.h),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 16.w,
@@ -424,7 +423,7 @@ class _EcommerceProductsLayoutState
           controller: scrollController,
           // physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          padding: EdgeInsets.symmetric(vertical: 10.h),
+          padding: EdgeInsets.symmetric(vertical: 10.h).copyWith(bottom: 80.h),
           itemCount: products.length + (isLoading && hasMore ? 1 : 0),
           itemBuilder: (context, index) {
             if (index == products.length) {
@@ -478,7 +477,8 @@ class _EcommerceProductsLayoutState
         controller: scrollController,
 
         // physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h)
+            .copyWith(bottom: 80.h),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 16.w,

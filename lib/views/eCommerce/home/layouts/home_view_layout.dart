@@ -235,7 +235,7 @@ class _EcommerceHomeViewLayoutState
           bottom: 20.h,
           left: 20.w,
           right: 20.w,
-          child: _buildViewMoreButton(context, 'Just For You', 'just_for_you'),
+          child: _buildViewMoreButton(context, 'Conçus pour vous', 'just_for_you'),
         ),
       ],
     );

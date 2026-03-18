@@ -49,7 +49,7 @@ class _AddUpdateAddressLayoutState
 
   int activeIndex = 0;
 
-  List<String> addressTags = ['Home', 'Office', 'other'];
+  List<String> addressTags = ['Domicile', 'Bureau', 'Autre'];
   String addressTag = '';
 
   final List<FocusNode> fNodes = [
