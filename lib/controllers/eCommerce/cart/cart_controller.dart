@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
@@ -46,46 +47,39 @@ class CartController extends StateNotifier<CartState> {
   }
 
   /// Met à jour la quantité d'un produit dans le panier.
-  /// - Si newQty > currentQty : appelle addToCart avec la DIFFÉRENCE (le backend additionne)
-  /// - Si newQty < currentQty : appelle decrementQty (currentQty - newQty) fois
+  /// Le backend `/cart/store` remplace (SET) la quantité existante par la valeur envoyée.
+  /// On envoie donc toujours la quantité ABSOLUE souhaitée.
   Future<void> setQuantity({
     required AddToCartModel addToCartModel,
     required int currentQty,
-    required int newQty,
   }) async {
-    if (newQty == currentQty) return;
+    if (addToCartModel.quantity == currentQty) return;
 
     state = CartState(isLoading: true, cartItems: cartItems);
     try {
-      if (newQty > currentQty) {
-        // Augmentation : envoyer uniquement la différence
-        final diff = newQty - currentQty;
-        final response = await ref.read(cartServiceProvider).addToCart(
-              addToCartModel: addToCartModel.copyWith(quantity: diff),
-            );
-        if (response.statusCode == 200) {
-          final List<dynamic> data = response.data['data']['cart_items'];
-          _cartItems =
-              data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
-        }
-      } else {
-        // Diminution : décrémenter autant de fois que nécessaire
-        final steps = currentQty - newQty;
-        for (int i = 0; i < steps; i++) {
-          final response = await ref
-              .read(cartServiceProvider)
-              .decrementQty(productId: addToCartModel.productId);
-          if (response.statusCode == 200) {
-            final List<dynamic> data = response.data['data']['cart_items'];
-            _cartItems =
-                data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
-          }
-        }
+      final response = await ref
+          .read(cartServiceProvider)
+          .addToCart(addToCartModel: addToCartModel);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['cart_items'];
+        _cartItems =
+            data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
       }
       state = CartState(isLoading: false, cartItems: cartItems);
+    } on DioException catch (e) {
+      state = CartState(isLoading: false, cartItems: cartItems);
+      final message = e.response?.data?['message'] as String?;
+      if (message != null) {
+        GlobalFunction.showCustomSnackbar(
+          message: message,
+          isSuccess: false,
+        );
+      }
+      debugPrint("setQuantity error: ${e.toString()}");
     } catch (error) {
       state = CartState(isLoading: false, cartItems: cartItems);
-      debugPrint("Error Logs: ${error.toString()}");
+      debugPrint("setQuantity error: ${error.toString()}");
     }
   }
 

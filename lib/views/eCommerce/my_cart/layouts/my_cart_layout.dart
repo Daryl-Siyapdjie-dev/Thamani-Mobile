@@ -382,7 +382,6 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                                 unit: cartItem.cartProduct[index].unit,
                               ),
                               currentQty: cartItem.cartProduct[index].quantity,
-                              newQty: newQty,
                             );
                         calculateCartSummery();
                       },
