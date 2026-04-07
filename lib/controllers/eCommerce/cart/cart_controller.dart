@@ -45,20 +45,42 @@ class CartController extends StateNotifier<CartState> {
     }
   }
 
+  /// Met à jour la quantité d'un produit dans le panier.
+  /// - Si newQty > currentQty : appelle addToCart avec la DIFFÉRENCE (le backend additionne)
+  /// - Si newQty < currentQty : appelle decrementQty (currentQty - newQty) fois
   Future<void> setQuantity({
     required AddToCartModel addToCartModel,
+    required int currentQty,
+    required int newQty,
   }) async {
+    if (newQty == currentQty) return;
+
     state = CartState(isLoading: true, cartItems: cartItems);
     try {
-      final response = await ref
-          .read(cartServiceProvider)
-          .addToCart(addToCartModel: addToCartModel);
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data']['cart_items'];
-        _cartItems =
-            data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
-        // Ne pas appeler toogleAllShopId() ni afficher de snackbar :
-        // cette méthode met à jour une quantité existante, pas un nouvel ajout.
+      if (newQty > currentQty) {
+        // Augmentation : envoyer uniquement la différence
+        final diff = newQty - currentQty;
+        final response = await ref.read(cartServiceProvider).addToCart(
+              addToCartModel: addToCartModel.copyWith(quantity: diff),
+            );
+        if (response.statusCode == 200) {
+          final List<dynamic> data = response.data['data']['cart_items'];
+          _cartItems =
+              data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
+        }
+      } else {
+        // Diminution : décrémenter autant de fois que nécessaire
+        final steps = currentQty - newQty;
+        for (int i = 0; i < steps; i++) {
+          final response = await ref
+              .read(cartServiceProvider)
+              .decrementQty(productId: addToCartModel.productId);
+          if (response.statusCode == 200) {
+            final List<dynamic> data = response.data['data']['cart_items'];
+            _cartItems =
+                data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
+          }
+        }
       }
       state = CartState(isLoading: false, cartItems: cartItems);
     } catch (error) {

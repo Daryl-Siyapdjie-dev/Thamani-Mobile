@@ -381,6 +381,8 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                                 color: cartItem.cartProduct[index].color?.id,
                                 unit: cartItem.cartProduct[index].unit,
                               ),
+                              currentQty: cartItem.cartProduct[index].quantity,
+                              newQty: newQty,
                             );
                         calculateCartSummery();
                       },

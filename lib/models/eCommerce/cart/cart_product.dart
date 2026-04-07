@@ -84,6 +84,7 @@ class CartProduct {
   late final String? unit;
   late final Gift? gift;
   bool? isDigital;
+  int? currentStock;
 
   CartProduct.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -102,6 +103,9 @@ class CartProduct {
     unit = json['unit'];
     gift = json['gift'] != null ? Gift.fromMap(json['gift']) : null;
     isDigital = json['is_digital'];
+    currentStock = json['current_stock'] as int? ??
+        json['stock'] as int? ??
+        json['available_stock'] as int?;
   }
 
   Map<String, dynamic> toJson() {

@@ -143,6 +143,9 @@ class CartProductCard extends ConsumerWidget {
             context: context,
             product: product,
           ),
+          Gap(4.h),
+          if (product.currentStock != null)
+            _buildStockBadge(context: context, stock: product.currentStock!),
           Gap(8.h),
           if (showIncrementDecrement)
             Row(
@@ -165,6 +168,33 @@ class CartProductCard extends ConsumerWidget {
               child: _senderReceiverInfoWidget()),
         ],
       ),
+    );
+  }
+
+  Widget _buildStockBadge({
+    required BuildContext context,
+    required int stock,
+  }) {
+    final isLow = stock <= 5;
+    final color = isLow ? Colors.orange : EcommerceAppColor.green;
+    return Row(
+      children: [
+        Icon(
+          isLow ? Icons.warning_amber_rounded : Icons.inventory_2_outlined,
+          size: 12.sp,
+          color: color,
+        ),
+        Gap(4.w),
+        Text(
+          isLow
+              ? 'Plus que $stock en stock'
+              : '$stock disponibles en stock',
+          style: AppTextStyle(context).bodyTextSmall.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+      ],
     );
   }
 
@@ -265,7 +295,7 @@ class CartProductCard extends ConsumerWidget {
                 ? EcommerceAppColor.green
                 : colors(GlobalFunction.navigatorKey.currentContext)
                     .primaryColor!
-                    .withOpacity(0.3),
+                    .withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
