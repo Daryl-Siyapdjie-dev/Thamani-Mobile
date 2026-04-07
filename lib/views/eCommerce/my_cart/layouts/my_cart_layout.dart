@@ -18,6 +18,7 @@ import 'package:ready_ecommerce/controllers/eCommerce/message/message_controller
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
 import 'package:ready_ecommerce/gen/assets.gen.dart';
 import 'package:ready_ecommerce/generated/l10n.dart';
+import 'package:ready_ecommerce/models/eCommerce/cart/add_to_cart_model.dart';
 import 'package:ready_ecommerce/models/eCommerce/cart/cart_product.dart';
 import 'package:ready_ecommerce/models/eCommerce/cart/hive_cart_model.dart';
 import 'package:ready_ecommerce/models/eCommerce/shop_message_model/shop.dart'
@@ -280,12 +281,15 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                   child: Container(
                     padding: EdgeInsets.all(6.r),
                     decoration: BoxDecoration(
-                      color: colors(context).primaryColor!.withOpacity(0.1),
+                      color: colors(context).primaryColor!.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: SvgPicture.asset(
                       Assets.svg.message,
-                      color: colors(context).primaryColor,
+                      colorFilter: ColorFilter.mode(
+                        colors(context).primaryColor!,
+                        BlendMode.srcIn,
+                      ),
                       // width: 16.w,
                       // height: 16.h,
                     ),
@@ -365,6 +369,20 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                               productId: cartItem.cartProduct[index].id);
                           calculateCartSummery();
                         }
+                      },
+                setQuantity: product.isDigital == true
+                    ? null
+                    : (int newQty) async {
+                        await ref.read(cartController.notifier).setQuantity(
+                              addToCartModel: AddToCartModel(
+                                productId: cartItem.cartProduct[index].id,
+                                quantity: newQty,
+                                size: cartItem.cartProduct[index].size?.id,
+                                color: cartItem.cartProduct[index].color?.id,
+                                unit: cartItem.cartProduct[index].unit,
+                              ),
+                            );
+                        calculateCartSummery();
                       },
               );
             },
@@ -518,7 +536,7 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
           ),
           Gap(10.w),
           Material(
-            color: EcommerceAppColor.primary.withOpacity(0.3),
+            color: EcommerceAppColor.primary.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(10.r),
             child: InkWell(
               borderRadius: BorderRadius.circular(10.r),

@@ -19,6 +19,7 @@ class CartProductCard extends ConsumerWidget {
   final bool hasGift;
   final void Function()? increment;
   final void Function()? decrement;
+  final void Function(int)? setQuantity;
   final bool showIncrementDecrement;
   const CartProductCard({
     super.key,
@@ -26,6 +27,7 @@ class CartProductCard extends ConsumerWidget {
     required this.hasGift,
     this.increment,
     this.decrement,
+    this.setQuantity,
     this.showIncrementDecrement = true,
   });
 
@@ -150,6 +152,7 @@ class CartProductCard extends ConsumerWidget {
                   productQuantity: product.quantity,
                   increment: increment,
                   decrement: decrement,
+                  onSetQuantity: setQuantity,
                 ),
                 Visibility(
                   visible: hasGift,

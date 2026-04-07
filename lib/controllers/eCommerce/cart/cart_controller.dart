@@ -45,6 +45,28 @@ class CartController extends StateNotifier<CartState> {
     }
   }
 
+  Future<void> setQuantity({
+    required AddToCartModel addToCartModel,
+  }) async {
+    state = CartState(isLoading: true, cartItems: cartItems);
+    try {
+      final response = await ref
+          .read(cartServiceProvider)
+          .addToCart(addToCartModel: addToCartModel);
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['cart_items'];
+        _cartItems =
+            data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
+        // Ne pas appeler toogleAllShopId() ni afficher de snackbar :
+        // cette méthode met à jour une quantité existante, pas un nouvel ajout.
+      }
+      state = CartState(isLoading: false, cartItems: cartItems);
+    } catch (error) {
+      state = CartState(isLoading: false, cartItems: cartItems);
+      debugPrint("Error Logs: ${error.toString()}");
+    }
+  }
+
   Future<void> increment({required int productId}) async {
     try {
       state = CartState(isLoading: true, cartItems: cartItems);
