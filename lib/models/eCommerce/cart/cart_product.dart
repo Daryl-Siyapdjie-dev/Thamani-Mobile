@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:ready_ecommerce/models/eCommerce/cart/gift.dart';
 
 class CartItem {
@@ -106,6 +107,7 @@ class CartProduct {
     currentStock = json['current_stock'] as int? ??
         json['stock'] as int? ??
         json['available_stock'] as int?;
+    debugPrint('[CartProduct] keys: ${json.keys.toList()} | currentStock: $currentStock');
   }
 
   Map<String, dynamic> toJson() {
