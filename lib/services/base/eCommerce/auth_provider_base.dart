@@ -24,9 +24,6 @@ abstract class AuthProviderBase {
   Future<Response> googleAuth({required String accessToken});
   Future<Response> appleAuth({
     required String identityToken,
-    required String? authorizationCode,
-    required String? givenName,
-    required String? familyName,
-    required String? email,
+    String? name, // Apple n'envoie le nom qu'à la première connexion
   });
 }

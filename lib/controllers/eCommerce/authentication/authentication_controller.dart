@@ -202,13 +202,23 @@ class AuthController extends StateNotifier<bool> {
         );
       }
 
-      // Step 2: Send identity token and other details to backend
+      // Step 2: Construire le nom complet
+      // Apple ne fournit givenName/familyName qu'à la PREMIÈRE connexion.
+      // Lors des reconnexions, ces champs seront null.
+      final String? fullName = [
+        appleAccount.givenName,
+        appleAccount.familyName,
+      ].where((part) => part != null && part.trim().isNotEmpty).join(' ').trim().isNotEmpty
+          ? [appleAccount.givenName, appleAccount.familyName]
+              .where((part) => part != null && part.trim().isNotEmpty)
+              .join(' ')
+              .trim()
+          : null;
+
+      // Step 3: Send identity token + name to backend
       final response = await ref.read(authServiceProvider).appleAuth(
             identityToken: appleAccount.identityToken!,
-            authorizationCode: appleAccount.authorizationCode,
-            givenName: appleAccount.givenName,
-            familyName: appleAccount.familyName,
-            email: appleAccount.email,
+            name: fullName, // null si reconnexion (Apple ne renvoie le nom qu'une fois)
           );
 
       final String message = response.data['message'];

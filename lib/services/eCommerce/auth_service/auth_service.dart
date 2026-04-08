@@ -152,25 +152,20 @@ class AuthService implements AuthProviderBase {
   @override
   Future<Response> appleAuth({
     required String identityToken,
-    required String? authorizationCode,
-    required String? givenName,
-    required String? familyName,
-    required String? email,
+    String? name, // Apple n'envoie le nom qu'à la première connexion
   }) async {
-    // Get FCM token for push notifications
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
+    final Map<String, dynamic> payload = {
+      "identity_token": identityToken,
+    };
+
+    // N'inclure "name" que s'il est disponible (non disponible lors des reconnexions)
+    if (name != null && name.trim().isNotEmpty) {
+      payload["name"] = name.trim();
+    }
 
     final response = await ref.read(apiClientProvider).post(
       AppConstants.appleAuthUrl,
-      data: {
-        "identity_token": identityToken,
-        "authorization_code": authorizationCode,
-        "first_name": givenName, // Apple provides first/last name
-        "last_name": familyName,
-        "email": email,
-        "device_key": fcmToken,
-        "device_type": Platform.isIOS ? 'ios' : 'android',
-      },
+      data: payload,
     );
     return response;
   }
