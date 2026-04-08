@@ -47,13 +47,31 @@ class CartController extends StateNotifier<CartState> {
   }
 
   /// Met à jour la quantité d'un produit dans le panier.
-  /// Le backend `/cart/store` remplace (SET) la quantité existante par la valeur envoyée.
-  /// On envoie donc toujours la quantité ABSOLUE souhaitée.
+  ///
+  /// - Envoie la quantité ABSOLUE souhaitée (le backend fait un SET, pas un ADD).
+  /// - Valide côté client contre [maxStock] si disponible.
+  /// - Affiche le message d'erreur backend en snackbar si l'API rejette.
   Future<void> setQuantity({
     required AddToCartModel addToCartModel,
     required int currentQty,
+    int? maxStock,
   }) async {
-    if (addToCartModel.quantity == currentQty) return;
+    final newQty = addToCartModel.quantity;
+
+    // Pas de changement
+    if (newQty == currentQty) return;
+
+    // Validation minimale
+    if (newQty < 1) return;
+
+    // Validation stock côté client (évite un appel API inutile)
+    if (maxStock != null && newQty > maxStock) {
+      GlobalFunction.showCustomSnackbar(
+        message: 'Stock insuffisant. Maximum disponible : $maxStock',
+        isSuccess: false,
+      );
+      return;
+    }
 
     state = CartState(isLoading: true, cartItems: cartItems);
     try {
@@ -70,13 +88,11 @@ class CartController extends StateNotifier<CartState> {
     } on DioException catch (e) {
       state = CartState(isLoading: false, cartItems: cartItems);
       final message = e.response?.data?['message'] as String?;
-      if (message != null) {
-        GlobalFunction.showCustomSnackbar(
-          message: message,
-          isSuccess: false,
-        );
-      }
-      debugPrint("setQuantity error: ${e.toString()}");
+      GlobalFunction.showCustomSnackbar(
+        message: message ?? 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("setQuantity DioError: ${e.toString()}");
     } catch (error) {
       state = CartState(isLoading: false, cartItems: cartItems);
       debugPrint("setQuantity error: ${error.toString()}");

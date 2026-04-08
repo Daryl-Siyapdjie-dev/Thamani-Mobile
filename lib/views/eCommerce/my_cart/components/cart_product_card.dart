@@ -156,6 +156,7 @@ class CartProductCard extends ConsumerWidget {
                   increment: increment,
                   decrement: decrement,
                   onSetQuantity: setQuantity,
+                  maxStock: product.currentStock,
                 ),
                 Visibility(
                   visible: hasGift,
