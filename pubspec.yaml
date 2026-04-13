@@ -1,7 +1,7 @@
 name: ready_ecommerce
-description: A modern, feature-rich eCommerce application for ordering products and tracking deliveries.
+description: A modern,feature-rich eCommerce application for ordering products and tracking deliveries.
 publish_to: none
-version: 1.0.2+4
+version: 1.0.2+5
 environment:
   sdk: ">=3.5.0 <4.0.0"
 
