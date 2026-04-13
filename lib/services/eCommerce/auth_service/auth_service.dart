@@ -154,8 +154,13 @@ class AuthService implements AuthProviderBase {
     required String identityToken,
     String? name, // Apple n'envoie le nom qu'à la première connexion
   }) async {
+    // FCM token pour enregistrer le device et recevoir les notifications
+    final String? fcmToken = await FirebaseMessaging.instance.getToken();
+
     final Map<String, dynamic> payload = {
       "identity_token": identityToken,
+      "device_key": fcmToken,
+      "device_type": Platform.isIOS ? 'ios' : 'android',
     };
 
     // N'inclure "name" que s'il est disponible (non disponible lors des reconnexions)
