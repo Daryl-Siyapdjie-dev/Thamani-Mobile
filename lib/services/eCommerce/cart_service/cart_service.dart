@@ -40,6 +40,16 @@ class CartService implements CartProviderBase {
   }
 
   @override
+  Future<Response> updateQuantity(
+      {required int productId, required int quantity}) async {
+    final response = await ref.read(apiClientProvider).post(
+      AppConstants.updateQuantity,
+      data: {'product_id': productId, 'quantity': quantity},
+    );
+    return response;
+  }
+
+  @override
   Future<Response> cartSummery({
     required String? couponId,
     required List<int> shopIds,

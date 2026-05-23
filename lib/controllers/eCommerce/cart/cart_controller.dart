@@ -46,25 +46,16 @@ class CartController extends StateNotifier<CartState> {
     }
   }
 
-  /// Met à jour la quantité d'un produit dans le panier.
-  ///
-  /// - Envoie la quantité ABSOLUE souhaitée (le backend fait un SET, pas un ADD).
-  /// - Valide côté client contre [maxStock] si disponible.
-  /// - Affiche le message d'erreur backend en snackbar si l'API rejette.
   Future<void> setQuantity({
-    required AddToCartModel addToCartModel,
+    required int productId,
+    required int newQty,
     required int currentQty,
     int? maxStock,
   }) async {
-    final newQty = addToCartModel.quantity;
-
-    // Pas de changement
+    if (state.isLoading) return;
     if (newQty == currentQty) return;
-
-    // Validation minimale
     if (newQty < 1) return;
 
-    // Validation stock côté client (évite un appel API inutile)
     if (maxStock != null && newQty > maxStock) {
       GlobalFunction.showCustomSnackbar(
         message: 'Stock insuffisant. Maximum disponible : $maxStock',
@@ -73,19 +64,25 @@ class CartController extends StateNotifier<CartState> {
       return;
     }
 
+    final oldItems = List<CartItem>.from(_cartItems);
     state = CartState(isLoading: true, cartItems: cartItems);
     try {
       final response = await ref
           .read(cartServiceProvider)
-          .addToCart(addToCartModel: addToCartModel);
+          .updateQuantity(productId: productId, quantity: newQty);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data']['cart_items'];
         _cartItems =
             data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
+        final info = response.data['data']['info'] as String?;
+        if (info != null) {
+          GlobalFunction.showCustomSnackbar(message: info, isSuccess: false);
+        }
       }
       state = CartState(isLoading: false, cartItems: cartItems);
     } on DioException catch (e) {
+      _cartItems = oldItems;
       state = CartState(isLoading: false, cartItems: cartItems);
       final message = e.response?.data?['message'] as String?;
       GlobalFunction.showCustomSnackbar(
@@ -94,14 +91,22 @@ class CartController extends StateNotifier<CartState> {
       );
       debugPrint("setQuantity DioError: ${e.toString()}");
     } catch (error) {
+      _cartItems = oldItems;
       state = CartState(isLoading: false, cartItems: cartItems);
+      GlobalFunction.showCustomSnackbar(
+        message: 'Une erreur est survenue',
+        isSuccess: false,
+      );
       debugPrint("setQuantity error: ${error.toString()}");
     }
   }
 
   Future<void> increment({required int productId}) async {
+    if (state.isLoading) return;
+
+    final oldItems = List<CartItem>.from(_cartItems);
+    state = CartState(isLoading: true, cartItems: cartItems);
     try {
-      state = CartState(isLoading: true, cartItems: cartItems);
       final response =
           await ref.read(cartServiceProvider).increentQty(productId: productId);
       if (response.statusCode == 200) {
@@ -109,20 +114,33 @@ class CartController extends StateNotifier<CartState> {
         _cartItems =
             data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
       }
-      // GlobalFunction.showCustomSnackbar(
-      //   message: response.data['message'],
-      //   isSuccess: response.statusCode == 200 ? true : false,
-      // );
       state = CartState(isLoading: false, cartItems: cartItems);
+    } on DioException catch (e) {
+      _cartItems = oldItems;
+      state = CartState(isLoading: false, cartItems: cartItems);
+      final message = e.response?.data?['message'] as String?;
+      GlobalFunction.showCustomSnackbar(
+        message: message ?? 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("increment DioError: ${e.toString()}");
     } catch (error) {
+      _cartItems = oldItems;
       state = CartState(isLoading: false, cartItems: cartItems);
-      debugPrint(error.toString());
+      GlobalFunction.showCustomSnackbar(
+        message: 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("increment error: ${error.toString()}");
     }
   }
 
   Future<void> decrement({required int productId}) async {
+    if (state.isLoading) return;
+
+    final oldItems = List<CartItem>.from(_cartItems);
+    state = CartState(isLoading: true, cartItems: cartItems);
     try {
-      state = CartState(isLoading: true, cartItems: cartItems);
       final response = await ref
           .read(cartServiceProvider)
           .decrementQty(productId: productId);
@@ -131,15 +149,24 @@ class CartController extends StateNotifier<CartState> {
         _cartItems =
             data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
       }
-      // GlobalFunction.showCustomSnackbar(
-      //   message: response.data['message'],
-      //   isSuccess: response.statusCode == 200 ? true : false,
-      // );
       state = CartState(isLoading: false, cartItems: cartItems);
+    } on DioException catch (e) {
+      _cartItems = oldItems;
+      state = CartState(isLoading: false, cartItems: cartItems);
+      final message = e.response?.data?['message'] as String?;
+      GlobalFunction.showCustomSnackbar(
+        message: message ?? 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("decrement DioError: ${e.toString()}");
     } catch (error) {
+      _cartItems = oldItems;
       state = CartState(isLoading: false, cartItems: cartItems);
-
-      debugPrint(error.toString());
+      GlobalFunction.showCustomSnackbar(
+        message: 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("decrement error: ${error.toString()}");
     }
   }
 

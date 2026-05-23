@@ -121,7 +121,7 @@ class CartProduct {
     data['total_reviews'] = totalReviews;
     data['total_sold'] = totalSold;
     data['color'] = color?.toJson();
-    data['size'] = color?.toJson();
+    data['size'] = size?.toJson();
     data['unit'] = unit;
     data['gift'] = gift?.toJson();
     data['is_digital'] = isDigital;

@@ -9,13 +9,13 @@ import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
 import 'package:ready_ecommerce/config/theme.dart';
 
-class IncrementDecrementButton extends StatelessWidget {
+class IncrementDecrementButton extends StatefulWidget {
   final void Function()? increment;
   final void Function()? decrement;
   final void Function(int)? onSetQuantity;
   final int productQuantity;
-  // Stock maximum disponible — null = pas d'info stock (pas de limite côté client)
   final int? maxStock;
+  final bool isLoading;
 
   const IncrementDecrementButton({
     super.key,
@@ -24,291 +24,163 @@ class IncrementDecrementButton extends StatelessWidget {
     this.onSetQuantity,
     required this.productQuantity,
     this.maxStock,
-  });
-
-  bool get _atMaxStock => maxStock != null && productQuantity >= maxStock!;
-  bool get _atMinQty => productQuantity <= 1;
-
-  void _showQuantityDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) => _QuantityDialog(
-        initialQuantity: productQuantity,
-        maxStock: maxStock,
-        onSetQuantity: onSetQuantity,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Bouton décrément — désactivé si quantité = 1
-        DecrementButton(
-          buttonColor: colors(context).accentColor,
-          iconColor: _atMinQty
-              ? EcommerceAppColor.lightGray.withValues(alpha: 0.4)
-              : EcommerceAppColor.lightGray,
-          onTap: _atMinQty ? null : decrement,
-        ),
-        Gap(8.w),
-        // Zone quantité cliquable
-        GestureDetector(
-          onTap: onSetQuantity != null
-              ? () => _showQuantityDialog(context)
-              : null,
-          child: Container(
-            constraints: BoxConstraints(minWidth: 38.w),
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
-            decoration: BoxDecoration(
-              color: onSetQuantity != null
-                  ? colors(context).primaryColor!.withValues(alpha: 0.08)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(6.r),
-              border: onSetQuantity != null
-                  ? Border.all(
-                      color:
-                          colors(context).primaryColor!.withValues(alpha: 0.3),
-                      width: 1,
-                    )
-                  : null,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  productQuantity.toString(),
-                  style: AppTextStyle(context).bodyText.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                if (onSetQuantity != null) ...[
-                  Gap(3.w),
-                  Icon(
-                    Icons.edit,
-                    size: 10.sp,
-                    color: colors(context).primaryColor!.withValues(alpha: 0.5),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-        Gap(8.w),
-        // Bouton incrément — désactivé si stock max atteint
-        IncrementButton(
-          buttonColor: colors(context).accentColor,
-          iconColor: _atMaxStock
-              ? EcommerceAppColor.lightGray.withValues(alpha: 0.4)
-              : EcommerceAppColor.lightGray,
-          onTap: _atMaxStock ? null : increment,
-        ),
-      ],
-    );
-  }
-}
-
-class _QuantityDialog extends StatefulWidget {
-  final int initialQuantity;
-  final int? maxStock;
-  final void Function(int)? onSetQuantity;
-
-  const _QuantityDialog({
-    required this.initialQuantity,
-    this.maxStock,
-    this.onSetQuantity,
+    this.isLoading = false,
   });
 
   @override
-  State<_QuantityDialog> createState() => _QuantityDialogState();
+  State<IncrementDecrementButton> createState() =>
+      _IncrementDecrementButtonState();
 }
 
-class _QuantityDialogState extends State<_QuantityDialog> {
+class _IncrementDecrementButtonState extends State<IncrementDecrementButton> {
   late final TextEditingController _controller;
-  final _formKey = GlobalKey<FormState>();
+  late final FocusNode _focusNode;
+
+  bool get _atMaxStock =>
+      widget.maxStock != null && widget.productQuantity >= widget.maxStock!;
+  bool get _atMinQty => widget.productQuantity <= 1;
 
   @override
   void initState() {
     super.initState();
     _controller =
-        TextEditingController(text: widget.initialQuantity.toString());
-    // Sélectionner tout le texte pour faciliter la saisie
-    _controller.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: _controller.text.length,
-    );
+        TextEditingController(text: widget.productQuantity.toString());
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChanged);
+  }
+
+  @override
+  void didUpdateWidget(IncrementDecrementButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync le TextField quand +/- modifient la quantité, sauf si l'utilisateur est en train de saisir
+    if (oldWidget.productQuantity != widget.productQuantity &&
+        !_focusNode.hasFocus) {
+      _controller.text = widget.productQuantity.toString();
+    }
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChanged);
+    _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _confirm() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final newQty = int.parse(_controller.text.trim());
-      if (newQty != widget.initialQuantity) {
-        widget.onSetQuantity?.call(newQty);
-      }
-      Navigator.of(context).pop();
+  void _onFocusChanged() {
+    if (!_focusNode.hasFocus) {
+      _confirm();
     }
   }
 
-  String? _validate(String? value) {
-    if (value == null || value.trim().isEmpty) return 'Entrez une quantité';
-    final qty = int.tryParse(value.trim());
-    if (qty == null) return 'Nombre invalide';
-    if (qty < 1) return 'Minimum 1';
-    if (widget.maxStock != null && qty > widget.maxStock!) {
-      return 'Maximum disponible : ${widget.maxStock}';
+  void _confirm() {
+    if (widget.isLoading) return;
+
+    final text = _controller.text.trim();
+    if (text.isEmpty) {
+      _controller.text = widget.productQuantity.toString();
+      return;
     }
-    return null;
+
+    final newQty = int.tryParse(text);
+    if (newQty == null || newQty < 1) {
+      _controller.text = widget.productQuantity.toString();
+      return;
+    }
+
+    if (newQty == widget.productQuantity) return;
+
+    widget.onSetQuantity?.call(newQty);
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      title: Row(
-        children: [
-          Icon(Icons.edit_outlined,
-              size: 20.sp, color: colors(context).primaryColor),
-          Gap(8.w),
-          Text(
-            'Modifier la quantité',
-            style: AppTextStyle(context).bodyText.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16.sp,
-                ),
-          ),
-        ],
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Affichage du stock max si disponible
-          if (widget.maxStock != null) ...[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-              decoration: BoxDecoration(
-                color: widget.maxStock! <= 5
-                    ? Colors.orange.withValues(alpha: 0.1)
-                    : EcommerceAppColor.green.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(6.r),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    widget.maxStock! <= 5
-                        ? Icons.warning_amber_rounded
-                        : Icons.inventory_2_outlined,
-                    size: 14.sp,
-                    color: widget.maxStock! <= 5
-                        ? Colors.orange
-                        : EcommerceAppColor.green,
-                  ),
-                  Gap(6.w),
-                  Text(
-                    widget.maxStock! <= 5
-                        ? 'Plus que ${widget.maxStock} en stock'
-                        : '${widget.maxStock} disponibles',
-                    style: AppTextStyle(context).bodyTextSmall.copyWith(
-                          color: widget.maxStock! <= 5
-                              ? Colors.orange
-                              : EcommerceAppColor.green,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-            Gap(12.h),
-          ],
-          Form(
-            key: _formKey,
-            child: TextFormField(
-              controller: _controller,
-              autofocus: true,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: AppTextStyle(context).bodyText.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 22.sp,
-                  ),
-              decoration: InputDecoration(
-                hintText: '1',
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: BorderSide(
-                    color:
-                        colors(context).primaryColor!.withValues(alpha: 0.35),
-                    width: 1.5,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: BorderSide(
-                    color: colors(context).primaryColor!,
-                    width: 2,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide:
-                      const BorderSide(color: Colors.red, width: 1.5),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: const BorderSide(color: Colors.red, width: 2),
-                ),
-              ),
-              validator: _validate,
-              onFieldSubmitted: (_) => _confirm(),
-            ),
-          ),
-        ],
-      ),
-      actionsPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(
-            'Annuler',
-            style: AppTextStyle(context)
-                .bodyText
-                .copyWith(color: colors(context).bodyTextSmallColor),
-          ),
+    final isEditable = widget.onSetQuantity != null;
+    final decrementDisabled = _atMinQty || widget.isLoading;
+    final incrementDisabled = _atMaxStock || widget.isLoading;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DecrementButton(
+          buttonColor: colors(context).accentColor,
+          iconColor: decrementDisabled
+              ? EcommerceAppColor.lightGray.withValues(alpha: 0.4)
+              : EcommerceAppColor.lightGray,
+          onTap: decrementDisabled ? null : widget.decrement,
         ),
-        ElevatedButton(
-          onPressed: _confirm,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colors(context).primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-          ),
-          child: Text(
-            'Confirmer',
-            style: AppTextStyle(context).bodyText.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
+        Gap(8.w),
+        if (isEditable) _buildTextField(context) else _buildStaticQty(context),
+        Gap(8.w),
+        IncrementButton(
+          buttonColor: colors(context).accentColor,
+          iconColor: incrementDisabled
+              ? EcommerceAppColor.lightGray.withValues(alpha: 0.4)
+              : EcommerceAppColor.lightGray,
+          onTap: incrementDisabled ? null : widget.increment,
         ),
       ],
+    );
+  }
+
+  Widget _buildTextField(BuildContext context) {
+    return SizedBox(
+      width: 52.w,
+      child: TextField(
+        controller: _controller,
+        focusNode: _focusNode,
+        enabled: !widget.isLoading,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(4),
+        ],
+        style: AppTextStyle(context).bodyText.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.r),
+            borderSide: BorderSide(
+              color: colors(context).primaryColor!.withValues(alpha: 0.35),
+              width: 1.5,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.r),
+            borderSide: BorderSide(
+              color: colors(context).primaryColor!,
+              width: 2,
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(6.r),
+            borderSide: BorderSide(
+              color: EcommerceAppColor.lightGray.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+        ),
+        onSubmitted: (_) => _focusNode.unfocus(),
+      ),
+    );
+  }
+
+  Widget _buildStaticQty(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(minWidth: 38.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+      child: Text(
+        widget.productQuantity.toString(),
+        textAlign: TextAlign.center,
+        style: AppTextStyle(context).bodyText.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+      ),
     );
   }
 }

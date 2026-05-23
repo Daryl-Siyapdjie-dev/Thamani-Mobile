@@ -157,6 +157,7 @@ class CartProductCard extends ConsumerWidget {
                   decrement: decrement,
                   onSetQuantity: setQuantity,
                   maxStock: product.currentStock,
+                  isLoading: ref.watch(cartController).isLoading,
                 ),
                 Visibility(
                   visible: hasGift,

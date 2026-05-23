@@ -6,6 +6,7 @@ abstract class CartProviderBase {
   Future<Response> addToCart({required AddToCartModel addToCartModel});
   Future<Response> increentQty({required int productId});
   Future<Response> decrementQty({required int productId});
+  Future<Response> updateQuantity({required int productId, required int quantity});
   Future<Response> getAllCarts();
   Future<Response> getAllGifts({required int shopId});
   Future<Response> addGiftToCart({required GiftAddModel giftAddModel});

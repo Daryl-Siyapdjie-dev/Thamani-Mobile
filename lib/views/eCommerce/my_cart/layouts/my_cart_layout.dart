@@ -18,7 +18,6 @@ import 'package:ready_ecommerce/controllers/eCommerce/message/message_controller
 import 'package:ready_ecommerce/controllers/misc/misc_controller.dart';
 import 'package:ready_ecommerce/gen/assets.gen.dart';
 import 'package:ready_ecommerce/generated/l10n.dart';
-import 'package:ready_ecommerce/models/eCommerce/cart/add_to_cart_model.dart';
 import 'package:ready_ecommerce/models/eCommerce/cart/cart_product.dart';
 import 'package:ready_ecommerce/models/eCommerce/cart/hive_cart_model.dart';
 import 'package:ready_ecommerce/models/eCommerce/shop_message_model/shop.dart'
@@ -328,22 +327,10 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                         );
                       }
                     : () async {
-                        if (!checkMultivendor()) {
-                          await ref.read(cartController.notifier).increment(
-                              productId: cartItem.cartProduct[index].id);
-                          calculateCartSummery();
-                        } else {
-                          if (ref.read(shopIdsProvider).isNotEmpty) {
-                            final value = ref.refresh(shopIdsProvider);
-                            final summery =
-                                ref.refresh(cartSummeryController.notifier);
-                            debugPrint(value.toString());
-                            debugPrint(summery.toString());
-                          }
-                          await ref.read(cartController.notifier).increment(
-                              productId: cartItem.cartProduct[index].id);
-                          calculateCartSummery();
-                        }
+                        if (ref.read(cartController).isLoading) return;
+                        await ref.read(cartController.notifier).increment(
+                            productId: cartItem.cartProduct[index].id);
+                        calculateCartSummery();
                       },
                 decrement: product.isDigital == true
                     ? () {
@@ -353,34 +340,17 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                         );
                       }
                     : () async {
-                        if (!checkMultivendor()) {
-                          await ref.read(cartController.notifier).decrement(
-                              productId: cartItem.cartProduct[index].id);
-                          calculateCartSummery();
-                        } else {
-                          if (ref.read(shopIdsProvider).isNotEmpty) {
-                            final value = ref.refresh(shopIdsProvider);
-                            final summery =
-                                ref.refresh(cartSummeryController.notifier);
-                            debugPrint(value.toString());
-                            debugPrint(summery.toString());
-                          }
-                          await ref.read(cartController.notifier).decrement(
-                              productId: cartItem.cartProduct[index].id);
-                          calculateCartSummery();
-                        }
+                        if (ref.read(cartController).isLoading) return;
+                        await ref.read(cartController.notifier).decrement(
+                            productId: cartItem.cartProduct[index].id);
+                        calculateCartSummery();
                       },
                 setQuantity: product.isDigital == true
                     ? null
                     : (int newQty) async {
                         await ref.read(cartController.notifier).setQuantity(
-                              addToCartModel: AddToCartModel(
-                                productId: cartItem.cartProduct[index].id,
-                                quantity: newQty,
-                                size: cartItem.cartProduct[index].size?.id,
-                                color: cartItem.cartProduct[index].color?.id,
-                                unit: cartItem.cartProduct[index].unit,
-                              ),
+                              productId: cartItem.cartProduct[index].id,
+                              newQty: newQty,
                               currentQty: cartItem.cartProduct[index].quantity,
                               maxStock: cartItem.cartProduct[index].currentStock,
                             );
