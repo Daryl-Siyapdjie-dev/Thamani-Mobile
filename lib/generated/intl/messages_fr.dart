@@ -113,8 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Créer un Nouveau Mot de Passe",
     ),
     "creditOrDebitCard": MessageLookupByLibrary.simpleMessage(
-      "Carte de Crédit ou de Débit",
-    ),
+        "Mobile Money (Orange, MTN)"),
     "currency": MessageLookupByLibrary.simpleMessage("Devise"),
     "currentPassword": MessageLookupByLibrary.simpleMessage(
       "Mot de Passe Actuel",

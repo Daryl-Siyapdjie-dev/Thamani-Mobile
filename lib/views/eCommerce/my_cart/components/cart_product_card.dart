@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:ready_ecommerce/components/ecommerce/confirmation_dialog.dart';
 import 'package:ready_ecommerce/components/ecommerce/increment_decrement_button.dart';
 import 'package:ready_ecommerce/config/app_color.dart';
 import 'package:ready_ecommerce/config/app_text_style.dart';
@@ -20,6 +21,7 @@ class CartProductCard extends ConsumerWidget {
   final void Function()? increment;
   final void Function()? decrement;
   final void Function(int)? setQuantity;
+  final void Function()? onDelete;
   final bool showIncrementDecrement;
   const CartProductCard({
     super.key,
@@ -28,8 +30,31 @@ class CartProductCard extends ConsumerWidget {
     this.increment,
     this.decrement,
     this.setQuantity,
+    this.onDelete,
     this.showIncrementDecrement = true,
   });
+
+  Future<bool> _handleSwipeDelete({required BuildContext context, required WidgetRef ref}) async {
+    bool confirm = false;
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => ConfirmationDialog(
+        title: 'Retirer cet article du panier ?',
+        des: 'Ce produit sera supprimé de votre panier.',
+        confirmButtonText: 'Retirer',
+        confirmationButtonColor: EcommerceAppColor.red,
+        isLoading: ref.watch(cartController).isLoading,
+        onPressed: () {
+          confirm = true;
+          Navigator.of(dialogContext).pop();
+        },
+      ),
+    );
+    if (confirm) {
+      onDelete?.call();
+    }
+    return confirm;
+  }
 
   void _handleGiftTap({
     required bool isGift,
@@ -50,41 +75,62 @@ class CartProductCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: EdgeInsets.only(top: 5.h),
-      child: Material(
-        color: GlobalFunction.getContainerColor(),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: colors(context).accentColor!,
-                width: 2.0,
+    return Dismissible(
+      key: ValueKey(product.id),
+      direction: DismissDirection.endToStart,
+      dismissThresholds: const {
+        DismissDirection.endToStart: 0.7,
+      },
+      confirmDismiss: (direction) async {
+        return await _handleSwipeDelete(context: context, ref: ref);
+      },
+      background: Container(
+        color: EcommerceAppColor.red,
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 20.w),
+        margin: EdgeInsets.only(top: 5.h),
+        child: Icon(
+          Icons.delete_outline,
+          color: Colors.white,
+          size: 30.sp,
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(top: 5.h),
+        child: Material(
+          color: GlobalFunction.getContainerColor(),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: colors(context).accentColor!,
+                  width: 2.0,
+                ),
               ),
             ),
-          ),
-          padding: EdgeInsets.symmetric(vertical: 20.h).copyWith(right: 20.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildProductImage(
-                    productImage: product.thumbnail,
-                  ),
-                  Gap(16.w),
-                  _buildProductInfo(
-                    context: context,
-                    product: product,
-                    ref: ref,
-                    showIncrementDecrement: showIncrementDecrement,
-                  ),
-                ],
-              ),
-            ],
+            padding: EdgeInsets.symmetric(vertical: 20.h).copyWith(right: 20.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProductImage(
+                      productImage: product.thumbnail,
+                    ),
+                    Gap(16.w),
+                    _buildProductInfo(
+                      context: context,
+                      product: product,
+                      ref: ref,
+                      showIncrementDecrement: showIncrementDecrement,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

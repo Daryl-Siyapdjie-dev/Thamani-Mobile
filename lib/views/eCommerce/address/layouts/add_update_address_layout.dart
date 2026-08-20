@@ -62,6 +62,7 @@ class _AddUpdateAddressLayoutState
     FocusNode()
   ];
   bool isDefaultAddress = false;
+  bool showExtraFields = false;
 
   @override
   void initState() {
@@ -160,68 +161,9 @@ class _AddUpdateAddressLayoutState
                         ),
                       ),
                       Gap(14.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            flex: 1,
-                            child: CustomTextFormField(
-                              name: S.of(context).area,
-                              hintText: S.of(context).area,
-                              textInputType: TextInputType.text,
-                              controller: areaController,
-                              focusNode: fNodes[2],
-                              textInputAction: TextInputAction.next,
-                              validator: (value) => null,
-                              //     GlobalFunction.commonValidator(
-                              //   context: context,
-                              //   value: value!,
-                              //   hintText: S.of(context).area,
-                              // ),
-                            ),
-                          ),
-                          Gap(5.w),
-                          Flexible(
-                            flex: 1,
-                            child: CustomTextFormField(
-                              name: S.of(context).flat,
-                              hintText: S.of(context).flat,
-                              textInputType: TextInputType.text,
-                              controller: flatNumController,
-                              focusNode: fNodes[3],
-                              textInputAction: TextInputAction.next,
-                              validator: (value) => null,
-                              //     GlobalFunction.commonValidator(
-                              //   context: context,
-                              //   value: value!,
-                              //   hintText: 'A3',
-                              // ),
-                            ),
-                          ),
-                          Gap(5.w),
-                          Flexible(
-                            flex: 1,
-                            child: CustomTextFormField(
-                              name: S.of(context).postalCode,
-                              hintText: '1200',
-                              textInputType: TextInputType.text,
-                              controller: postalCodeController,
-                              focusNode: fNodes[4],
-                              textInputAction: TextInputAction.next,
-                              validator: (value) => null,
-                              //     GlobalFunction.commonValidator(
-                              //   context: context,
-                              //   value: value!,
-                              //   hintText: S.of(context).postalCode,
-                              // ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Gap(14.h),
                       CustomTextFormField(
-                        name: S.of(context).addressLine1,
-                        hintText: S.of(context).addressLine1,
+                        name: 'Quartier (Lieu de résidence)',
+                        hintText: 'Quartier (Lieu de résidence)',
                         textInputType: TextInputType.text,
                         controller: addressLine1Controller,
                         focusNode: fNodes[5],
@@ -229,22 +171,95 @@ class _AddUpdateAddressLayoutState
                         validator: (value) => GlobalFunction.commonValidator(
                           context: context,
                           value: value!,
-                          hintText: S.of(context).addressLine1,
+                          hintText: 'Quartier (Lieu de résidence)',
                         ),
                       ),
                       Gap(14.h),
-                      CustomTextFormField(
-                        name: S.of(context).addressLine2,
-                        hintText: S.of(context).addressLine2,
-                        textInputType: TextInputType.text,
-                        controller: addressLine2Controller,
-                        textInputAction: TextInputAction.next,
-                        validator: (value) => null,
-                        // GlobalFunction.commonValidator(
-                        //   context: context,
-                        //   value: value!,
-                        //   hintText: S.of(context).addressLine2,
-                        // ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            showExtraFields = !showExtraFields;
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              showExtraFields ? Icons.remove_circle_outline : Icons.add_circle_outline,
+                              color: colors(context).primaryColor,
+                            ),
+                            Gap(8.w),
+                            Text(
+                              'Ajouter plus d\'informations (facultatif)',
+                              style: AppTextStyle(context).bodyTextSmall.copyWith(
+                                color: colors(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Gap(14.h),
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child: showExtraFields
+                            ? Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Flexible(
+                                        flex: 1,
+                                        child: CustomTextFormField(
+                                          name: S.of(context).area,
+                                          hintText: S.of(context).area,
+                                          textInputType: TextInputType.text,
+                                          controller: areaController,
+                                          focusNode: fNodes[2],
+                                          textInputAction: TextInputAction.next,
+                                          validator: (value) => null,
+                                        ),
+                                      ),
+                                      Gap(5.w),
+                                      Flexible(
+                                        flex: 1,
+                                        child: CustomTextFormField(
+                                          name: S.of(context).flat,
+                                          hintText: S.of(context).flat,
+                                          textInputType: TextInputType.text,
+                                          controller: flatNumController,
+                                          focusNode: fNodes[3],
+                                          textInputAction: TextInputAction.next,
+                                          validator: (value) => null,
+                                        ),
+                                      ),
+                                      Gap(5.w),
+                                      Flexible(
+                                        flex: 1,
+                                        child: CustomTextFormField(
+                                          name: S.of(context).postalCode,
+                                          hintText: '1200',
+                                          textInputType: TextInputType.text,
+                                          controller: postalCodeController,
+                                          focusNode: fNodes[4],
+                                          textInputAction: TextInputAction.next,
+                                          validator: (value) => null,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Gap(14.h),
+                                  CustomTextFormField(
+                                    name: 'Détails supplémentaires',
+                                    hintText: 'Détails supplémentaires (facultatif)',
+                                    textInputType: TextInputType.text,
+                                    controller: addressLine2Controller,
+                                    textInputAction: TextInputAction.next,
+                                    validator: (value) => null,
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
                       ),
                       Gap(14.h),
                       buildAddressTag(),

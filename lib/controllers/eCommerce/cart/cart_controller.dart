@@ -101,6 +101,46 @@ class CartController extends StateNotifier<CartState> {
     }
   }
 
+  Future<void> deleteCartItem({required int productId}) async {
+    if (state.isLoading) return;
+
+    final oldItems = List<CartItem>.from(_cartItems);
+    state = CartState(isLoading: true, cartItems: cartItems);
+    try {
+      final response = await ref
+          .read(cartServiceProvider)
+          .deleteCartItem(productId: productId);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data']['cart_items'];
+        _cartItems =
+            data.map((cartItem) => CartItem.fromJson(cartItem)).toList();
+        GlobalFunction.showCustomSnackbar(
+          message: response.data['message'] ?? 'Produit retiré du panier',
+          isSuccess: true,
+        );
+      }
+      state = CartState(isLoading: false, cartItems: cartItems);
+    } on DioException catch (e) {
+      _cartItems = oldItems;
+      state = CartState(isLoading: false, cartItems: cartItems);
+      final message = e.response?.data?['message'] as String?;
+      GlobalFunction.showCustomSnackbar(
+        message: message ?? 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("deleteCartItem DioError: ${e.toString()}");
+    } catch (error) {
+      _cartItems = oldItems;
+      state = CartState(isLoading: false, cartItems: cartItems);
+      GlobalFunction.showCustomSnackbar(
+        message: 'Une erreur est survenue',
+        isSuccess: false,
+      );
+      debugPrint("deleteCartItem error: ${error.toString()}");
+    }
+  }
+
   Future<void> increment({required int productId}) async {
     if (state.isLoading) return;
 

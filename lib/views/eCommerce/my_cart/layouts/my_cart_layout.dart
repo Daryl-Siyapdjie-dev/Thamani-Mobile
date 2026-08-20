@@ -356,6 +356,12 @@ class _EcommerceMyCartLayoutState extends ConsumerState<EcommerceMyCartLayout> {
                             );
                         calculateCartSummery();
                       },
+                onDelete: () async {
+                  if (ref.read(cartController).isLoading) return;
+                  await ref.read(cartController.notifier).deleteCartItem(
+                      productId: cartItem.cartProduct[index].id);
+                  calculateCartSummery();
+                },
               );
             },
           ),

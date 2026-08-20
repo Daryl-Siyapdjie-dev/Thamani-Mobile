@@ -38,6 +38,7 @@ class AppConstants {
   static const String incrementQty = '$baseUrl/cart/increment';
   static const String decrementQty = '$baseUrl/cart/decrement';
   static const String updateQuantity = '$baseUrl/cart/update-quantity';
+  static const String removeCartItem = '$baseUrl/cart/delete';
   static const String getAllCarts = '$baseUrl/carts';
   static const String getAllGifts = '$baseUrl/gifts';
   static const String addGift = '$baseUrl/gift/store';

@@ -50,6 +50,15 @@ class CartService implements CartProviderBase {
   }
 
   @override
+  Future<Response> deleteCartItem({required int productId}) async {
+    final response = await ref.read(apiClientProvider).post(
+      AppConstants.removeCartItem,
+      data: {'product_id': productId},
+    );
+    return response;
+  }
+
+  @override
   Future<Response> cartSummery({
     required String? couponId,
     required List<int> shopIds,
